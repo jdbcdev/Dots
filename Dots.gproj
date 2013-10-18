@@ -2,15 +2,29 @@
  <properties autorotation="0" encrypt="0" fps="60" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="com.yourdomain.yourapp" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="0">
   <imageScales/>
  </properties>
+ <folder name="fonts">
+  <file source="fonts/ComicBookCommando.ttf"/>
+  <file source="fonts/futur1.ttf"/>
+ </folder>
  <folder name="gfx">
-  <file source="../Sudoku/resources/images/7_gems.png"/>
+  <file source="gfx/circle_grey.png"/>
+  <file source="gfx/circle_blue.png"/>
+  <file source="gfx/circle_yellow.png"/>
+  <file source="gfx/circle_red.png"/>
+  <file source="gfx/circle_orange.png"/>
+  <file source="gfx/circle_green.png"/>
+  <file source="gfx/7_gems.png"/>
+  <file source="gfx/6_gems.png"/>
+  <file source="gfx/5_gems.png"/>
+  <file source="gfx/4_gems.png"/>
+  <file source="gfx/3_gems.png"/>
+  <file source="gfx/2_gems.png"/>
+  <file source="gfx/1_gems.png"/>
   <file source="../Sudoku/resources/images/element3.png"/>
   <file source="../Sudoku/resources/images/element2.png"/>
   <file source="../Sudoku/resources/images/element.png"/>
-  <file source="../Sudoku/resources/images/4_gems.png"/>
-  <file source="../Sudoku/resources/images/3_gems.png"/>
-  <file source="../Sudoku/resources/images/2_gems.png"/>
-  <file source="../Sudoku/resources/images/1_gems.png"/>
  </folder>
+ <file source="hud.lua"/>
+ <file source="dot.lua"/>
  <file source="main.lua"/>
 </project>
