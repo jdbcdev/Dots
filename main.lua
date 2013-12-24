@@ -30,8 +30,8 @@ local textures_types = {
 						Texture.new("gfx/circle_grey.png", true)
 						}
 						
-function table.contains(table, element)
-  for _, value in pairs(table) do
+function table.contains(list, element)
+  for _, value in pairs(list) do
     if value == element then
       return true
     end
@@ -41,9 +41,9 @@ end
 
 -- Constructor
 function GameScene:init()
-	--self:draw_background()
-	self:draw_dots()
-	self:draw_hud()
+	
+	self:drawDots()
+	self:drawHud()
 	
 	self.lines = {}
 	
@@ -58,7 +58,7 @@ function GameScene:draw_background()
 	local bg_width = application:getLogicalWidth() + 100
 	local bg_height = application:getLogicalHeight() + 100
 	local background = Shape.new()
-	background:setFillStyle(Shape.TEXTURE, texture_bg)    
+	background:setFillStyle(Shape.TEXTURE, texture_bg)
 	background:beginPath(Shape.NON_ZERO)
 	background:moveTo(-100,-100)
 	background:lineTo(bg_width, -100)
@@ -69,15 +69,16 @@ function GameScene:draw_background()
 	self:addChild(background)
 end
 
--- Check if two dots given are neighbords
+-- Check if two dots given are neighbords (horizontal, vertical or diagonal)
 local function isNeighbord(dot1, dot2)
 
 	if (dot1 == dot2) then
 		return false
 	end
 	
-	local result = ((dot1.row == dot2.row) and (dot1.col == dot2.col + 1 or dot1.col == dot2.col -1)) or
-					((dot1.col == dot2.col) and (dot1.row == dot2.row + 1 or dot1.row == dot2.row -1))
+	local result = ((dot1.row == dot2.row) and (dot1.col == dot2.col + 1 or dot1.col == dot2.col -1)) or -- same row
+					((dot1.col == dot2.col) and (dot1.row == dot2.row + 1 or dot1.row == dot2.row -1)) or -- same row
+					(math.abs(dot1.col - dot2.col) == 1 and math.abs(dot1.row - dot2.row) == 1) -- diagonal
 	
 	return result
 end
@@ -87,7 +88,7 @@ local function create_line(dot1, dot2)
 	if not (dot1 == dot2) then
 		local color = colors[dot1.type]
 		local line = Shape.new()
-		line:setLineStyle(6, color, 1)
+		line:setLineStyle(8, color, 1)
 		line:beginPath()
 		line:moveTo(dot1:getX() + dot1:getWidth() * 0.5, dot1:getY() + dot1:getHeight() * 0.5)
 		line:lineTo(dot2:getX() + dot2:getWidth() * 0.5, dot2:getY() + dot2:getHeight() * 0.5)
@@ -99,25 +100,28 @@ local function create_line(dot1, dot2)
 end
 
 -- Set up dots
-function GameScene:draw_dots()
+function GameScene:drawDots()
 
-	--self.name = "mijuego"
-	
 	math.randomseed( os.time() )
-	local board = Sprite.new()
+	local board = self.board or {}
 	
 	local posX = 15
 	local posY = 200
+	local i,j
 	for i=1, num_rows do
+		board[i] = board[i] or {}
 		for j=1, num_columns do
 			local dot_type = math.random(5)
-			local dot = Bitmap.new(textures_types[dot_type])
+			
+			local dot = board[i][j] or Bitmap.new(textures_types[dot_type])
 			dot.enabled = true
 			dot.type = dot_type
 			dot.row = i
 			dot.col = j
 			dot:setScale(0.43)
 			dot:setPosition(posX, posY)
+			
+			board[i][j] = dot
 			
 			--Dot is pressed
 			function dot:click(event)
@@ -127,8 +131,6 @@ function GameScene:draw_dots()
 					list[1] = dot -- first dot
 					self.current_dot = dot
 					self.list = list
-					
-					--dot:setTexture(textures_types[6])
 				end
 			end
 			
@@ -141,7 +143,6 @@ function GameScene:draw_dots()
 					if (list) then
 						-- Check if dot is already in the list
 						local current_dot = self.current_dot
-						
 						if not (current_dot.type == dot.type) then -- distinct dot type
 							self:rollback_dots()
 						elseif (current_dot.type == dot.type and not (current_dot == dot))
@@ -149,8 +150,6 @@ function GameScene:draw_dots()
 								
 								--New dot only if dot already exists
 								if not (table.contains(list, dot)) then
-									--dot:setTexture(textures_types[6])
-									--dot:setScale(0.5)
 									table.insert(list, dot)
 									self.current_dot = dot
 									
@@ -178,25 +177,16 @@ function GameScene:draw_dots()
 							self.hud:updateScore(list)
 							
 							self:deleteList()
-						--else
-							--self:rollback_dots()
 						end	
 					end
 				end
 				
 				self:deleteTrack()
 			end
-					
-			--[[
-			Event.TOUCHES_BEGIN = “touchesBegin”
-			Event.TOUCHES_MOVE = “touchesMove”
-			Event.TOUCHES_END = “touchesEnd”
-			Event.TOUCHES_CANCEL = “touchesCancel”
-			]]--
 			
 			dot:addEventListener(Event.MOUSE_DOWN, dot.click, self)
 			dot:addEventListener(Event.MOUSE_MOVE, dot.move, self)
-			dot:addEventListener(Event.MOUSE_UP, dot.release, self)
+			self:addEventListener(Event.MOUSE_UP, self.release, self)
 			
 			self:addChild(dot)
 			posX = posX + dot:getWidth() + 24
@@ -205,10 +195,12 @@ function GameScene:draw_dots()
 		posX = 15
 		posY = posY + 70
 	end
+	
+	self.board = board
 end
 
 -- Draw score and time
-function GameScene:draw_hud()
+function GameScene:drawHud()
 	local hud = Hud.new()
 	self.hud = hud
 	self:addChild(hud)
@@ -219,24 +211,102 @@ function GameScene:release(event)
 	
 	if self:hitTestPoint(event.x, event.y) then
 		event:stopPropagation()
-		self:rollback_dots()
+					
+		local list = self.list
+		if (list) then
+			if (#list >= 3) then
+				self.hud:updateScore(list)
+				self:deleteList()
+			end	
+		end
 	end
+				
+	self:deleteTrack()
 end
 
 -- Remove dots list from scene when matching happens
 function GameScene:deleteList()
 	local list = self.list
+	local board = self.board
 	
+	local i
 	for i=1, #list do
 		local dot = list[i]
 		if (dot and self:contains(dot)) then
+			board[dot.row][dot.col] = nil
 			self:removeChild(dot)
 			self.list = nil
 		end
 	end
 	
 	-- Drop new dots from the top
+	if #list > 0 then
+		self:settleDots()
+	end
+end
+
+-- Return row where dot to drop is found
+function GameScene:lookForDot(row, col)
+	local board = self.board
+	local i = row
+	while (i > 0) do
+		local gem = board[i][col]
+		if (gem) then
+			found = true
+			break
+		else
+			i = i - 1
+		end
+	end
 	
+	return i
+	
+end
+
+-- Drop new dots
+function GameScene:settleDots()
+	local board = self.board
+	local moved = false -- No one dot dropped
+	local drops = 0
+	local i,j
+	for j = 1, num_columns do
+		for i = num_rows, 2, -1 do
+			local dot = board[i][j]
+			if not dot then
+				local index = self:lookForDot(i - 1, j) -- Looking for a dot must be dropped
+				if (index == 0) then
+					-- No gem to drop
+					break
+				else
+					moved = true
+					drops = drops + 1
+		
+					local droppedDot = board[index][j]
+					droppedDot.row = i
+					droppedDot.col = j
+					board[index][j] = nil
+					board[i][j] = droppedDot
+					-- droppedGem:setBoard(i, j)
+					
+					-- Drop the gem
+					local squareSize = 70
+					local posY = droppedDot:getY() + squareSize * (i-index)
+					
+					local tween = GTween.new(droppedDot, 0.1 * (i-index), 
+									{y = posY}, 
+									{ease = easing.outBack,
+									 onComplete = function()
+													drops = drops - 1
+												  end
+									})
+				end
+			end
+		end
+	end
+	
+	--if moved then
+	--self:drawDots()
+	--end
 end
 
 -- Delete join track from memory and scene
@@ -244,7 +314,7 @@ function GameScene:deleteTrack()
 	local lines = self.lines
 	if (lines) then
 		for i=1, #lines do
-			print(i)
+			-- print(i)
 			local line = lines[i] -- a Shape segment
 			if (line and self:contains(line)) then
 				self:removeChild(line)
