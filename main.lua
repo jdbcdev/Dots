@@ -95,8 +95,6 @@ function GameScene:drawDots()
 		posY = posY + 70
 	end
 	
-	print("------------------")
-	
 	self.board = board
 end
 
@@ -117,7 +115,7 @@ function GameScene:release(event)
 		if (list) then
 			if (#list >= 3) then
 				self.hud:updateScore(list)
-				self:deleteList()
+				self:deleteDots()
 			end	
 		end
 	end
@@ -126,7 +124,7 @@ function GameScene:release(event)
 end
 
 -- Remove dots list from scene when matching happens
-function GameScene:deleteList()
+function GameScene:deleteDots()
 	local list = self.list
 	local board = self.board
 	
@@ -223,9 +221,9 @@ function GameScene:deleteTrack()
 				self:removeChild(line)
 			end
 		end
-							
-		self.lines = {}
 	end
+	
+	self.lines = {}
 end
 
 

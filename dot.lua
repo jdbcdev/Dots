@@ -61,7 +61,8 @@ function Dot:init(row, col)
 	
 	self:addEventListener(Event.MOUSE_DOWN, self.click, self)
 	self:addEventListener(Event.MOUSE_MOVE, self.move, self)
-	self:addEventListener(Event.MOUSE_UP, self.release, self)
+	
+	--self:addEventListener(Event.MOUSE_UP, self.release, self)
 end
 
 --Dot is pressed
@@ -108,25 +109,6 @@ function Dot:move(event)
 			end
 		end
 	end
-end
-
--- When user release
-function Dot:release(event)
-
-	local scene = self:getParent()
-	if self:hitTestPoint(event.x, event.y) then
-		event:stopPropagation()
-		
-		local list = scene.list
-		if (list) then
-			if (#list >= 3) then
-				scene.hud:updateScore(list)
-				scene:deleteList()
-			end	
-		end
-	end
-	
-	scene:deleteTrack()
 end
 
 function Dot:setBoard(row, col)
