@@ -3,16 +3,29 @@
   <imageScales/>
  </properties>
  <folder name="classes">
+  <file source="classes/dataSaver.lua"/>
+  <file source="classes/button.lua"/>
+  <file source="classes/GiderosCodingEasy.lua"/>
+  <file source="classes/scenemanager.lua"/>
   <file source="classes/gtween.lua"/>
   <file source="classes/easing.lua"/>
  </folder>
  <file source="ideas.txt"/>
- <folder name="scenes"/>
+ <folder name="scenes">
+  <file source="menu.lua"/>
+  <file source="game.lua"/>
+ </folder>
  <folder name="fonts">
+  <file source="fonts/new_academy.ttf"/>
   <file source="fonts/ComicBookCommando.ttf"/>
   <file source="fonts/futur1.ttf"/>
  </folder>
  <folder name="gfx">
+  <file source="gfx/speaker_blue.png"/>
+  <file source="gfx/trash_yellow.png"/>
+  <file source="gfx/clock.png"/>
+  <file source="gfx/clock_blue.png"/>
+  <file source="gfx/jdbc_games.png"/>
   <file source="gfx/circle_grey.png"/>
   <file source="gfx/circle_blue.png"/>
   <file source="gfx/circle_yellow.png"/>
@@ -31,6 +44,8 @@
   <file source="../Sudoku/resources/images/element.png"/>
  </folder>
  <file source="hud.lua"/>
+ <file source="submit.lua"/>
  <file source="dot.lua"/>
+ <file source="i18n.lua"/>
  <file source="main.lua"/>
 </project>

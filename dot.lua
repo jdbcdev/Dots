@@ -2,14 +2,16 @@
 Dot = Core.class(Sprite)
 
 local colors = {
-				0xFFFF00,
+				--0xFFFF00,
+				0x483D8B,
 				0xFF0000,
 				0xFFA500,
 				0x228B22,
-				0x0000FF
+				0x007FFF,
+				--0x0000FF
 				}
 
-textures_types = {
+local textures_types = {
 						Texture.new("gfx/circle_yellow.png", true),
 						Texture.new("gfx/circle_red.png", true),
 						Texture.new("gfx/circle_orange.png", true),
@@ -48,21 +50,53 @@ local function create_line(dot1, dot2)
 	end
 end
 
+-- Return a circle shape
+local function create_circle(color)
+	local shape = Shape.new()
+	shape:setFillStyle(Shape.SOLID, color)
+	shape:drawCircle(25, 25, 25)
+	
+	return shape
+end
+
+-- Return a square shape
+local function create_square(color)
+	local shape = Shape.new()
+	shape:setFillStyle(Shape.SOLID, color)
+	shape:drawRoundRectangle(50, 50, 0)
+	
+	return shape
+end
+
 -- Constructor
 function Dot:init(row, col)
-	local color = math.random(5)
-	local dot = Bitmap.new(textures_types[color])
-	self.enabled = true -- ?
+	local color = math.random(#colors)
+	--local dot = Bitmap.new(textures_types[color])
+	--self:setScale(0.43)
+	
+	--[[
+	local i = math.random(1,2)
+	local dot 
+	if (i==1) then
+		dot = create_circle(colors[color])
+	else
+		dot = create_square(colors[color])
+	end
+	]]--
+	
+	local dot = create_square(colors[color])
+	
+	self.enabled = true
 	self.color = color
 	self.row = row
 	self.col = col
-	self:setScale(0.43)
+	
 	self:addChild(dot)
+	
+	--print(self:getWidth(), self:getHeight())
 	
 	self:addEventListener(Event.MOUSE_DOWN, self.click, self)
 	self:addEventListener(Event.MOUSE_MOVE, self.move, self)
-	
-	--self:addEventListener(Event.MOUSE_UP, self.release, self)
 end
 
 --Dot is pressed
