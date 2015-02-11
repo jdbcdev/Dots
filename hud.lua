@@ -84,16 +84,22 @@ end
 -- Increase score +1
 function Hud:updateScore(list)
 	
+	local scene = self.scene
 	local score = self.score
+	local bonus = 1
 	
-	for i=1, #list do
-		score = score + 1
+	local dot = list[#list]
+	
+	if (#list >= 7) then
+		bonus = 3 -- Bonus x3
+		scene:showBonus(bonus, dot:getX(), dot:getY())
+	elseif (#list > 3) then
+		bonus = 2 -- Bonus x2
+		scene:showBonus(bonus, dot:getX(), dot:getY())
 	end
 	
-	if (#list > 3) then
-		score = score * 2 -- Bonus x2
-	elseif (#list >= 7) then
-		score = score * 3 -- Bonus x3
+	for i=1, #list do
+		score = score + bonus
 	end
 	
 	self.score = score

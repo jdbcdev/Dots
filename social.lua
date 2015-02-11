@@ -214,6 +214,7 @@ end
 
 -- Return true if is already connected
 function Social:isConnected()
+
 	local access_token = facebook:getAccessToken()
 	local result = not (access_token == "")
 	

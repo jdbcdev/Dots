@@ -44,7 +44,7 @@ function GameModeScene:draw_dots()
 					{140, 65, 0xFFA500},
 					{165, 65, 0x228B22}
 					}
-	local a
+
 	for a=1, #coords do
 		local coord = coords[a]
 		local posX, posY, color = coord[1], coord[2], coord[3]

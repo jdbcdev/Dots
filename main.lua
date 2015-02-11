@@ -2,11 +2,6 @@
 application:setKeepAwake(true)
 application:setOrientation(Application.PORTRAIT)
 
---require("mobdebug").start()
-
-local android = application:getDeviceInfo() == "Android"
-android = false
-
 local width = application:getContentWidth()
 
 local function draw_loading()
@@ -32,47 +27,26 @@ local function preloader()
 	SoundManager.setup()
 	
 	Billing.setup()
+	LeaderBoardScene.setup()
 	
 	stage:removeChild(loading)
 	loading = nil
 	
 	gameState = GameState.new()
 	
-	scenes = {"menu", "game", "shop", "score", "powerup", "modes"}
+	scenes = {"menu", "game", "shop", "score", "powerup", "modes", "leaderboard"}
 	sceneManager = SceneManager.new({
 		["menu"] = MenuScene,
 		["game"] = GameScene,
 		["shop"] = ShopScene,
 		["score"] = ScoreScene,
 		["powerup"] = PowerupScene,
-		["modes"] = GameModeScene
+		["modes"] = GameModeScene,
+		["leaderboard"] = LeaderBoardScene
 		})
 	stage:addChild(sceneManager)
-	sceneManager:changeScene(scenes[1])
+	sceneManager:changeScene(scenes[7])
 end
 
 draw_loading()
---stage:addEventListener(Event.ENTER_FRAME, preloader)
-
-local transitions = {
-	SceneManager.moveFromLeft,
-	SceneManager.moveFromRight,
-	SceneManager.moveFromBottom,
-	SceneManager.moveFromTop,
-	SceneManager.moveFromLeftWithFade,
-	SceneManager.moveFromRightWithFade,
-	SceneManager.moveFromBottomWithFade,
-	SceneManager.moveFromTopWithFade,
-	SceneManager.overFromLeft,
-	SceneManager.overFromRight,
-	SceneManager.overFromBottom,
-	SceneManager.overFromTop,
-	SceneManager.overFromLeftWithFade,
-	SceneManager.overFromRightWithFade,
-	SceneManager.overFromBottomWithFade,
-	SceneManager.overFromTopWithFade,
-	SceneManager.fade,
-	SceneManager.crossFade,
-	SceneManager.flip,
-	SceneManager.flipWithFade,
-	SceneManager.flipWithShade}
+stage:addEventListener(Event.ENTER_FRAME, preloader)

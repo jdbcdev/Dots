@@ -1,5 +1,5 @@
 <project>
- <properties autorotation="0" encryptAssets="0" fps="60" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="com.yourdomain.yourapp" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="0" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="0">
+ <properties autorotation="0" encryptAssets="0" fps="30" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="com.yourdomain.yourapp" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="0" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="0">
   <imageScales/>
  </properties>
  <folder name="sounds">
@@ -23,6 +23,7 @@
  </folder>
  <file source="ideas.txt"/>
  <folder name="scenes">
+  <file source="leaderboard.lua"/>
   <file source="modes.lua"/>
   <file source="powerup.lua"/>
   <file source="score.lua"/>
@@ -37,6 +38,9 @@
   <file source="fonts/futur1.ttf"/>
  </folder>
  <folder name="gfx">
+  <file source="gfx/circle_blue.png"/>
+  <file source="gfx/circle_yellow.png"/>
+  <file source="gfx/circle_orange.png"/>
   <file source="gfx/hyperlink_grey.png"/>
   <file source="gfx/trash_grey.png"/>
   <file source="gfx/gear_grey.png"/>

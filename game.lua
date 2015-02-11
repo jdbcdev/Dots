@@ -2,7 +2,9 @@ GameScene = Core.class(Sprite)
 
 local num_rows = 7
 local num_columns = 6
-						
+
+local font = TTFont.new("fonts/new_academy.ttf", 40)
+
 function table.contains(list, element)
   for _, value in pairs(list) do
     if value == element then
@@ -282,6 +284,23 @@ function GameScene:hide_layers()
 	self.layer_dots:setVisible(false)
 end
 
+-- Show bonus (x2, x3)
+function GameScene:showBonus(bonus, posX, posY)
+
+	local message = TextField.new(font,"x"..bonus)
+	message:setTextColor(0xffff00)
+	message:setShadow(2,1, 0x000000)
+	message:setPosition(posX, posY)
+	self:addChild(message)
+	
+	local tween = GTween.new(message, 1.2, 
+							{scaleX = 1.2, scaleY = 1.2, alpha=0.5, y = posY -20},
+							{ease = easing.linear, 
+							onComplete = function()
+											self:removeChild(message)
+										end
+							})
+end
 
 -- Back to menu when back button is pressed
 function GameScene:onKeyDown(event)
