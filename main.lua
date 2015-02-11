@@ -4,6 +4,8 @@ application:setOrientation(Application.PORTRAIT)
 
 --require("mobdebug").start()
 
+local android = application:getDeviceInfo() == "Android"
+android = false
 
 local width = application:getContentWidth()
 
@@ -11,20 +13,8 @@ local function draw_loading()
 	loading = Sprite.new()
 	
 	local logo = Bitmap.new(Texture.new("gfx/jdbc_games.png", true))
-	--logo:setScale(0.67)
-	logo:setPosition((width - logo:getWidth()) * 0.5, 200)
+	logo:setPosition((width - logo:getWidth()) * 0.5, 250)
 	loading:addChild(logo)
-	
-	--local tween = GTween.new(logo, 2, {y=200}, {ease = easing.outElastic})
-	
-	local font =  TTFont.new("fonts/new_academy.ttf", 50)
-	local text = TextField.new(font, "Loading")
-	text:setTextColor(0xff0000)
-	text:setShadow(2, 1, 0x000000)
-	local posX = (width - text:getWidth()) * 0.5
-	text:setPosition(posX, 500)
-	loading.text = text
-	loading:addChild(text)
 	
 	stage:addChild(loading)
 end
@@ -33,29 +23,36 @@ end
 local function preloader()
 	stage:removeEventListener(Event.ENTER_FRAME, preloader)
 	
-	--Advertise.setup()
+	Advertise.setup()
 	MenuScene.setup()
 	Hud.setup()
-	--GameScene.setup()
+	ShopScene.setup()
+	ScoreScene.setup()
+	PowerupScene.setup()
+	SoundManager.setup()
+	
+	Billing.setup()
 	
 	stage:removeChild(loading)
 	loading = nil
 	
-	scenes = {"menu", "game"} --, "score"}
+	gameState = GameState.new()
+	
+	scenes = {"menu", "game", "shop", "score", "powerup", "modes"}
 	sceneManager = SceneManager.new({
 		["menu"] = MenuScene,
 		["game"] = GameScene,
-		--["score"] = ScoreScene
+		["shop"] = ShopScene,
+		["score"] = ScoreScene,
+		["powerup"] = PowerupScene,
+		["modes"] = GameModeScene
 		})
 	stage:addChild(sceneManager)
 	sceneManager:changeScene(scenes[1])
 end
 
 draw_loading()
-stage:addEventListener(Event.ENTER_FRAME, preloader)
-
-Submit.get_scores() 
---Submit.add_score(1, 100)
+--stage:addEventListener(Event.ENTER_FRAME, preloader)
 
 local transitions = {
 	SceneManager.moveFromLeft,
@@ -79,6 +76,3 @@ local transitions = {
 	SceneManager.flip,
 	SceneManager.flipWithFade,
 	SceneManager.flipWithShade}
-
---local scene = GameScene.new()
---stage:addChild(scene)

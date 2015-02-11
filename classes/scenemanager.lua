@@ -365,3 +365,6 @@ function SceneManager:onEnterFrame(event)
 
 end
 
+function SceneManager:getCurrentScene()
+	return self.scene1
+end

@@ -4,10 +4,10 @@ MenuScene = Core.class(Sprite)
 local width = application:getContentWidth()
 
 -- Return a square shape
-local function create_square(color)
+function create_square(size, color)
 	local shape = Shape.new()
 	shape:setFillStyle(Shape.SOLID, color)
-	shape:drawRoundRectangle(50, 50, 0)
+	shape:drawRoundRectangle(size, size, 0)
 	
 	return shape
 end
@@ -15,18 +15,16 @@ end
 function MenuScene.setup()
 	
 	--Textures
-	--MenuScene.texture_bg = textures:getTextureRegion("halloween_house.png")
+	MenuScene.texture_shop = Texture.new("gfx/shopping_cart_green.png", true)
+	MenuScene.texture_play = Texture.new("gfx/play.png", true)
 	
 	MenuScene.font_title = TTFont.new("fonts/new_academy.ttf", 90)
-	MenuScene.font_play = TTFont.new("fonts/new_academy.ttf", 30)
+	MenuScene.font_button = TTFont.new("fonts/new_academy.ttf", 30)
 end
 
 -- Constructor
 function MenuScene:init() 
-	
-	--application:setBackgroundColor(0x222222)
-	
-	--self:draw_bg()
+		
 	self:draw_title()
 	
 	self:addEventListener("enterEnd", self.enterEnd, self)
@@ -36,7 +34,9 @@ end
 -- When menu scene is loaded
 function MenuScene:enterEnd()
 	
-	self:draw_buttons()
+	self:draw_start()
+	--self:draw_shop()
+	
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 	
 	--Advertise.showBanner()
@@ -67,12 +67,17 @@ end
 -- Draw title
 function MenuScene:draw_title()
 	
-	--local title1 = TextField.new(MenuScene.font_title, "Atoms")
-	local title1 = TextField.new(MenuScene.font_title, "Squares")
-	title1:setTextColor(0x000000)
-	title1:setShadow(2, 1, 0x38B0DE)
+	local title1 = TextField.new(MenuScene.font_title, "Square")
+	title1:setTextColor(0x483D8B)
+	title1:setShadow(2, 2, 0x000000)
 	title1:setPosition((width - title1:getWidth()) * 0.5, 120)
 	self:addChild(title1)
+	
+	local title2 = TextField.new(MenuScene.font_title, "Dots")
+	title2:setTextColor(0x1C86EE)
+	title2:setShadow(2, 2, 0x001100)
+	title2:setPosition((width - title2:getWidth()) * 0.5, 340)
+	self:addChild(title2)
 	
 	self:draw_dots()
 end
@@ -80,59 +85,49 @@ end
 -- Draw some dots
 function MenuScene:draw_dots()
 	local coords = {
-					{170, 200, 0x007FFF},
-					{280, 200, 0xFF0000},
-					{170, 270, 0xFFA500},
-					{280, 270, 0x228B22}
+					{188, 200, 0x007FFF},
+					{262, 200, 0xFF0000},
+					{188, 270, 0xFFA500},
+					{262, 270, 0x228B22}
 					}
-	local a
+					
 	for a=1, #coords do
 		local coord = coords[a]
 		local posX, posY, color = coord[1], coord[2], coord[3]
-		local dot = create_square(color)
+		local dot = create_square(50, color)
 		dot:setPosition(posX, posY)
 		self:addChild(dot)
 	end
 end
 
--- Draw play button
-function MenuScene:draw_buttons()
+-- Draw start button
+function MenuScene:draw_start()
 	
 	local group = Sprite.new()
 	
 	local border = Shape.new()
-	border:setFillStyle(Shape.SOLID, 0x483D8B)
+	border:setFillStyle(Shape.SOLID, 0xB9D3EE)
 	border:setLineStyle(2, 0xF0FFF0)
 	border:drawRoundRectangle(280, 100, 40)
 	group:addChild(border)
 
-	local text = TextField.new(MenuScene.font_play, "Play now")
-	text:setTextColor(0xffffff)
-	--text:setShadow(2, 1, 0x38B0DE)
+	local text = TextField.new(MenuScene.font_button, getString("start"))
+	text:setTextColor(0xFFD700)
+	text:setShadow(3, 1, 0x000000)
 	text:setPosition((280 - text:getWidth()) * 0.5, 46)
 	group:addChild(text)
 	
-	group:setPosition(100, 450)
+	group:setPosition(100, 480)
 	self:addChild(group)
 	
 	group:addEventListener(Event.MOUSE_UP,
 							function(event)
 								if (group:hitTestPoint(event.x, event.y)) then
 									event:stopPropagation()
-									sceneManager:changeScene(scenes[2], 1, SceneManager.fade, easing.linear)
+									SoundManager.play_effect(1)
+									sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 								end
 							end)
-	
-	--[[
-	icon_play:addEventListener(Event.MOUSE_UP, 
-								function(event)
-									if (icon_play:hitTestPoint(event.x, event.y)) then
-										event:stopPropagation()
-										MenuScene.sound_push:play()
-										icon_play:setVisible(false)
-										sceneManager:changeScene(scenes[2], 1.5, SceneManager.moveFromRight, easing.OutBack)
-									end
-								end)]]--
 end
 
 -- When back button is pressed

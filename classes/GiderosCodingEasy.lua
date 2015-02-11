@@ -12,6 +12,7 @@ local function overRideMethod(object, func, index, callback)
 	if object ~= nil and object[func] ~= nil and object["__OV"..func] == nil then
 		object["__OV"..func] = object[func]
 		object[func] = function(...)
+			local arg = {...}
 			if arg[index] then
 				arg[index] = callback(arg[index])
 			end

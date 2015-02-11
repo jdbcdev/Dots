@@ -2,15 +2,14 @@
 Dot = Core.class(Sprite)
 
 local colors = {
-				--0xFFFF00,
 				0x483D8B,
 				0xFF0000,
 				0xFFA500,
 				0x228B22,
-				0x007FFF,
-				--0x0000FF
+				0x007FFF
 				}
 
+--[[
 local textures_types = {
 						Texture.new("gfx/circle_yellow.png", true),
 						Texture.new("gfx/circle_red.png", true),
@@ -19,6 +18,7 @@ local textures_types = {
 						Texture.new("gfx/circle_blue.png", true),
 						-- Texture.new("gfx/circle_grey.png", true)
 						}
+]]--
 
 -- Check if two dots given are neighbords (horizontal, vertical or diagonal)
 local function isNeighbord(dot1, dot2)
@@ -27,16 +27,16 @@ local function isNeighbord(dot1, dot2)
 		return false
 	end
 	
-	local result = ((dot1.row == dot2.row) and (dot1.col == dot2.col + 1 or dot1.col == dot2.col -1)) or -- same row
-					((dot1.col == dot2.col) and (dot1.row == dot2.row + 1 or dot1.row == dot2.row -1)) or -- same row
-					(math.abs(dot1.col - dot2.col) == 1 and math.abs(dot1.row - dot2.row) == 1) -- diagonal
+	local result = ((dot1.row == dot2.row) and (dot1.col == dot2.col + 1 or dot1.col == dot2.col -1))  -- same row
+					or ((dot1.col == dot2.col) and (dot1.row == dot2.row + 1 or dot1.row == dot2.row -1)) -- same row
+					--or (math.abs(dot1.col - dot2.col) == 1 and math.abs(dot1.row - dot2.row) == 1) -- diagonal
 	
 	return result
 end
 
 -- Return line from dot1 to dot2
 local function create_line(dot1, dot2)
-	if not (dot1 == dot2) then
+	if (dot1 and dot2 and (not (dot1 == dot2))) then
 		local color = colors[dot1.color]
 		local line = Shape.new()
 		line:setLineStyle(8, color, 1)
@@ -92,9 +92,7 @@ function Dot:init(row, col)
 	self.col = col
 	
 	self:addChild(dot)
-	
-	--print(self:getWidth(), self:getHeight())
-	
+		
 	self:addEventListener(Event.MOUSE_DOWN, self.click, self)
 	self:addEventListener(Event.MOUSE_MOVE, self.move, self)
 end
@@ -104,40 +102,44 @@ function Dot:click(event)
 	if self:hitTestPoint(event.x, event.y) then
 		event:stopPropagation()
 		
-		local scene = self:getParent()
-		
-		local list = {} 
-		list[1] = self -- first dot
-		scene.current_dot = self
-		scene.list = list
+		local layer = self:getParent()
+		if (layer) then
+			local scene = layer:getParent()
+			if (scene) then
+				local list = {} 
+				list[1] = self -- first dot
+				scene.current_dot = self
+				scene.list = list
+			end
+		end
 	end
 end
 
 -- Moving dot while screen is pressed
 function Dot:move(event)
 	if self:hitTestPoint(event.x, event.y) then
-		local scene = self:getParent()
 		event:stopPropagation()
-					
-		-- TODO 
-		local list = scene.list
-		if (list) then
-			-- Check if dot is already in the list
-			local current_dot = scene.current_dot
-			if (current_dot.color == self.color and not (current_dot == self))
-					and isNeighbord(current_dot, self) then	-- Same dot type
-								
-				--New dot only if dot already exists
-				if not (table.contains(list, self)) then
-					table.insert(list, self)
-					scene.current_dot = self
+		local layer = self:getParent()
+		if (layer) then
+			local scene = layer:getParent()
+			
+			if (scene and scene.list) then	
+				local list = scene.list
+
+				-- Check if dot is already in the list
+				local current_dot = scene.current_dot
+				if (current_dot.color == self.color and not (current_dot == self))
+						and isNeighbord(current_dot, self) then	-- Same dot type
 									
-					-- Draw one line to connect two dots
-					local line = create_line(current_dot, self)
-					if line then
-						scene:addChild(line)
-						local lines = scene.lines
-						lines[#lines + 1] = line
+					--New dot only if dot already exists
+					if (self == list[1]) then
+						self:draw_line()
+					elseif not (table.contains(list, self)) then
+						table.insert(list, self)
+						
+						-- Draw one line to connect two dots
+						self:draw_line()
+						scene.current_dot = self
 					end
 				end
 			end
@@ -145,6 +147,25 @@ function Dot:move(event)
 	end
 end
 
+-- Draw line between current_dot and self
+function Dot:draw_line()
+	local layer = self:getParent()
+	if (layer) then
+		local scene = layer:getParent()
+		if (scene) then
+			local current_dot = scene.current_dot
+			
+			local line = create_line(current_dot, self)
+			if line then
+				layer:addChild(line)
+				local lines = scene.lines
+				table.insert(lines, line)
+			end
+		end
+	end
+end
+
+-- Set row and column
 function Dot:setBoard(row, col)
 	self.row = row
 	self.col = col

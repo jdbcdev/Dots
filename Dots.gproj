@@ -2,7 +2,18 @@
  <properties autorotation="0" encryptAssets="0" fps="60" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="com.yourdomain.yourapp" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="0" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="0">
   <imageScales/>
  </properties>
+ <folder name="sounds">
+  <file source="sounds/guitar7.mp3"/>
+  <file source="sounds/guitar6.mp3"/>
+  <file source="sounds/guitar5.mp3"/>
+  <file source="sounds/guitar4.mp3"/>
+  <file source="sounds/guitar3.mp3"/>
+  <file source="sounds/guitar2.mp3"/>
+  <file source="sounds/guitar1.mp3"/>
+ </folder>
  <folder name="classes">
+  <file source="classes/ads.lua"/>
+  <file source="classes/billing.lua"/>
   <file source="classes/dataSaver.lua"/>
   <file source="classes/button.lua"/>
   <file source="classes/GiderosCodingEasy.lua"/>
@@ -12,40 +23,41 @@
  </folder>
  <file source="ideas.txt"/>
  <folder name="scenes">
+  <file source="modes.lua"/>
+  <file source="powerup.lua"/>
+  <file source="score.lua"/>
+  <file source="shop.lua"/>
   <file source="menu.lua"/>
   <file source="game.lua"/>
  </folder>
  <folder name="fonts">
+  <file source="fonts/DroidSansFallback.ttf"/>
   <file source="fonts/new_academy.ttf"/>
   <file source="fonts/ComicBookCommando.ttf"/>
   <file source="fonts/futur1.ttf"/>
  </folder>
  <folder name="gfx">
+  <file source="gfx/hyperlink_grey.png"/>
+  <file source="gfx/trash_grey.png"/>
+  <file source="gfx/gear_grey.png"/>
+  <file source="gfx/play.png"/>
+  <file source="gfx/hyperlink_green.png"/>
+  <file source="gfx/gear_red.png"/>
+  <file source="gfx/shopping_cart_green.png"/>
   <file source="gfx/speaker_blue.png"/>
   <file source="gfx/trash_yellow.png"/>
   <file source="gfx/clock.png"/>
   <file source="gfx/clock_blue.png"/>
   <file source="gfx/jdbc_games.png"/>
-  <file source="gfx/circle_grey.png"/>
-  <file source="gfx/circle_blue.png"/>
-  <file source="gfx/circle_yellow.png"/>
-  <file source="gfx/circle_red.png"/>
-  <file source="gfx/circle_orange.png"/>
-  <file source="gfx/circle_green.png"/>
-  <file source="gfx/7_gems.png"/>
-  <file source="gfx/6_gems.png"/>
-  <file source="gfx/5_gems.png"/>
-  <file source="gfx/4_gems.png"/>
-  <file source="gfx/3_gems.png"/>
-  <file source="gfx/2_gems.png"/>
-  <file source="gfx/1_gems.png"/>
-  <file source="../Sudoku/resources/images/element3.png"/>
-  <file source="../Sudoku/resources/images/element2.png"/>
-  <file source="../Sudoku/resources/images/element.png"/>
  </folder>
  <file source="hud.lua"/>
+ <file source="sounds.lua"/>
+ <file source="pause.lua"/>
+ <file source="gamestate.lua"/>
+ <file source="parse.lua"/>
  <file source="submit.lua"/>
  <file source="dot.lua"/>
+ <file source="social.lua"/>
  <file source="i18n.lua"/>
  <file source="main.lua"/>
 </project>

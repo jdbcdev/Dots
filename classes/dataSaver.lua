@@ -1,6 +1,8 @@
 module("dataSaver", package.seeall)
 
-require "json"
+if not json then
+	require "json"
+end
 
 function saveValue(key, value)
 	
