@@ -11,7 +11,7 @@ function PowerupScene.setup()
 				price = 500
 			}
 
-	content[2] = {title = "two_daggers",
+	content[2] = {title = "trash_dot",
 				icon = Hud.texture_powerup[2][1],
 				price = 1500
 			}
@@ -72,7 +72,7 @@ function PowerupScene:draw_dots()
 					{140, 65, 0xFFA500},
 					{165, 65, 0x228B22}
 					}
-	local a
+					
 	for a=1, #coords do
 		local coord = coords[a]
 		local posX, posY, color = coord[1], coord[2], coord[3]
@@ -181,12 +181,13 @@ function PowerupScene:draw_price()
 									
 									-- You get more powerups if you have enough jewels and less than 9995
 									if (gameState.coins >= price and gameState.powerups[index] < max_powerup)then
-										--SoundManager.play_effect("jewel")
+										SoundManager.play_effect(7)
 										gameState:add_powerup(index)
 										gameState:remove_coins(content[index].price)
 										gameState:save()
 										
 										-- Add powerups to current parent scene (game or score scene)
+										--[[
 										local parent = self:getParent()
 										if (parent) then
 											local hud = parent.hud
@@ -194,12 +195,12 @@ function PowerupScene:draw_price()
 												hud:add_powerup(index, 5)
 											else
 												parent:add_powerup(index, 5)
-												
 											end
 										end
-											
-										-- Update jewels that you have
-										self:removeChild(self.title)
+										]]--
+										
+										-- Update dots you have
+										self:removeChild(self.text_dots)
 										self:draw_title()
 										
 										--Update items you have
@@ -260,6 +261,7 @@ function PowerupScene:draw_ok()
 										PowerupScene.hide_powerup(scene)
 										scene:show_paused()										
 									else
+										SoundManager.play_effect(1)
 										sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 									end
 								end
@@ -283,7 +285,7 @@ function PowerupScene.draw_panel(scene, show)
 		scene.panel = panel
 		
 		local posX = {50, 200, 355}
-		local a
+
 		for a=1,3 do
 			PowerupScene.draw_powerup(scene, posX[a], a, show)
 		end
@@ -300,8 +302,7 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 		local scale = 0.6
 		local scale_down = 0.5
 		local posY = 650
-	
-		-- Sands of time
+
 		local texture
 		if (powerups_num[a] > 0 or show) then
 			texture = Hud.texture_powerup[a][1]
@@ -335,6 +336,7 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 											end
 											
 											if (show) then
+												SoundManager.play_effect(2)
 												sceneManager:changeScene(scenes[5], 1, SceneManager.fade, easing.linear, {userData = a})
 											else
 												local hud = scene.hud
@@ -346,14 +348,14 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 													
 														hud.powerup_enabled[a] = false
 														
+														scene:apply_powerup(a)
+														
 														local posX = button:getX() + (button:getWidth() - number:getWidth()) * 0.5
 														number:setX(posX)
 														
 														texture = Hud.texture_powerup[a][2]
 														icon:setTexture(texture)
 														icon2:setTexture(texture)
-													
-														scene:apply_powerup(a)
 													else													
 														PowerupScene.show_powerup(scene, a)
 													end
@@ -402,8 +404,6 @@ function PowerupScene:onKeyDown(event)
 			parent.shop = nil
 			
 			parent:show_paused()
-			
-			print("hola")
 		else
 			-- Back to main menu
 			

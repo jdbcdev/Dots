@@ -2,6 +2,9 @@
 application:setKeepAwake(true)
 application:setOrientation(Application.PORTRAIT)
 
+local ios= application:getDeviceInfo() == "iOS"
+local android = application:getDeviceInfo() == "Android"
+
 local width = application:getContentWidth()
 
 local function draw_loading()
@@ -18,6 +21,13 @@ end
 local function preloader()
 	stage:removeEventListener(Event.ENTER_FRAME, preloader)
 	
+	--[[
+	if (ios or android) then
+		social = Social.new()
+		social:login()
+	end
+	]]--
+	
 	Advertise.setup()
 	MenuScene.setup()
 	Hud.setup()
@@ -26,7 +36,7 @@ local function preloader()
 	PowerupScene.setup()
 	SoundManager.setup()
 	
-	Billing.setup()
+	--Billing.setup()
 	LeaderBoardScene.setup()
 	
 	stage:removeChild(loading)
@@ -45,7 +55,7 @@ local function preloader()
 		["leaderboard"] = LeaderBoardScene
 		})
 	stage:addChild(sceneManager)
-	sceneManager:changeScene(scenes[7])
+	sceneManager:changeScene(scenes[1])
 end
 
 draw_loading()

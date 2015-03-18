@@ -14,6 +14,7 @@ end
 function GameModeScene:enterEnd(event)
 	self:draw_play()
 	self:draw_shop()
+	self:draw_leaderboard()
 	
 	self:draw_comment()
 	self:draw_panel()
@@ -120,6 +121,43 @@ function GameModeScene:draw_shop()
 									event:stopPropagation()
 									SoundManager.play_effect(6)
 									sceneManager:changeScene(scenes[3], 1, SceneManager.fade, easing.linear)
+								end
+							end)
+end
+
+
+-- Draw leaderboard button
+function GameModeScene:draw_leaderboard()
+	
+	local group = Sprite.new()
+	
+	local border = Shape.new()
+	border:setFillStyle(Shape.SOLID, 0xFF7F24)
+	border:setLineStyle(2, 0xF0FFF0)
+	border:drawRoundRectangle(300, 100, 40)
+	group:addChild(border)
+	
+	--[[local icon = Bitmap.new(MenuScene.texture_play)
+	icon:setScale(0.5)
+	icon:setPosition(10, 20)
+	group:addChild(icon)
+	]]--
+	
+	local text = TextField.new(MenuScene.font_button, getString("score"))
+	text:setTextColor(0xFFD700)
+	text:setShadow(3, 1, 0x000000)
+	text:setPosition((300 - text:getWidth()) * 0.6, 46)
+	group:addChild(text)
+	
+	group:setPosition(90, 210)
+	self:addChild(group)
+	
+	group:addEventListener(Event.MOUSE_UP,
+							function(event)
+								if (group:hitTestPoint(event.x, event.y)) then
+									event:stopPropagation()
+									SoundManager.play_effect(1)
+									sceneManager:changeScene(scenes[7], 1, SceneManager.fade, easing.linear, {userData=3000})
 								end
 							end)
 end

@@ -170,6 +170,7 @@ function ScoreScene:draw_play()
 							function(event)
 								if (group:hitTestPoint(event.x, event.y)) then
 									event:stopPropagation()
+									SoundManager.play_effect(1)
 									sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 								end
 							end)

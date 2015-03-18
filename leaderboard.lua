@@ -1,12 +1,53 @@
 
 LeaderBoardScene = Core.class(Sprite)
-LeaderBoardScene.SCORE_FORMAT = "%08d"
+
+local MAX_PLAYERS = 5
+local debug = false
+
+--to check if file exists
+function file_exists(name)
+	local f=io.open(name,"r")
+	
+	if f then 
+		io.close(f)
+		return true 
+	else 
+		return false 
+	end
+end
+
+-- Load user photo from Documents folder
+function loadFBphoto(id)
+	
+	local file_name = "|D|"..id..".png"
+	local texture
+	
+	-- Check file exists
+	if file_exists(file_name) then
+		print("el fichero existe")
+		
+		local success
+		success, texture = pcall(Texture.new, file_name, true)
+		
+		-- if I was able to load it (has correct format)
+		if not success then
+			texture = nil
+		end
+	end
+		
+	-- if no texture, take default pic
+	if not texture then
+		texture = Texture.new("gfx/user_default.jpg", true)
+	end
+	
+	return Bitmap.new(texture)
+end
 
 function LeaderBoardScene.setup()
 	LeaderBoardScene.font = getTTFont("fonts/new_academy.ttf", 40)
 	LeaderBoardScene.font_rank = getTTFont("fonts/new_academy.ttf", 45)
 	LeaderBoardScene.font_name = getTTFont("fonts/new_academy.ttf", 30)
-	LeaderBoardScene.font_score = getTTFont("fonts/futur1.ttf", 36)
+	LeaderBoardScene.font_score = TTFont.new("fonts/futur1.ttf", 36)
 	
 	-- Medals textures
 	LeaderBoardScene.texture_medalgold = Texture.new("gfx/circle_yellow.png", true)
@@ -17,17 +58,18 @@ end
 
 -- Return player ranking
 function LeaderBoardScene:getPlayerRanking()
-	local score_list = self.score_list -- friends score list
-	local player_score = self.player_score -- current player score
 	
-	local rank = 1
+	local list = self.score_list -- friends score list
+
+	local rank = #list -- Last position as default
 	
-	if (list and player_score) then
+	if (list) then
 		for i=1, #list do
-			local data = score_list[i]
+			local data = list[i]
 			local score = data.score
-			
-			if (player_score > score) then
+		
+			-- Check if userid and score matches
+			if (social.userId == data.user.id) then
 				rank = i
 				break
 			end
@@ -38,11 +80,42 @@ function LeaderBoardScene:getPlayerRanking()
 end
 
 -- Constructor
-function LeaderBoardScene:init(score)
-		
-	self.player_score = score or 0
+function LeaderBoardScene:init()
+	
 	self:addEventListener("enterEnd", self.onEnterEnd, self)
 end
+
+-- Load friends scores from facebook on background
+function LeaderBoardScene:onEnterEnd()
+	
+	if (social and (not social.connected)) then
+		social:login()
+	else
+		self:loginResponse()
+	end
+	
+	self:draw_header()
+	self:draw_ok()
+	
+	-- Score list for testing
+	if (debug) then
+		social = {userid = 5}
+		self.score_list = {
+						{user = {id = 1, name = "Pepito"}, score = 2000 },
+						{user = {id = 2, name = "Juanito"}, score = 1500 },
+						{user = {id = 3, name = "Daniel"}, score = 1200 },
+						{user = {id = 4, name = "Jaime"}, score = 800 },
+						{user = {id = 5, name = "Perico"}, score = 650 },
+						{user = {id = 6, name = "David"}, score = 550 },
+						{user = {id = 7, name = "Federico"}, score = 400 },
+						{user = {id = 10, name = "Federico"}, score = 100 },
+					}
+		self:draw_list()
+	end
+	
+	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+end
+
 
 -- Show earned dots as title
 function LeaderBoardScene:draw_header()
@@ -55,20 +128,9 @@ function LeaderBoardScene:draw_header()
 		
 	text_dots:setPosition(210, 48)
 	self:addChild(text_dots)
-	
 	self.text_dots = text_dots
 
-	self:draw_dots()
-	
-	--[[
-	local title = TextField.new(LeaderBoardScene.font, getString("leaderboards"), true)
-	title:setTextColor(0x00B2EE)
-	title:setShadow(2, 1, 0xff0000)
-	local posX = (width - title:getWidth()) * 0.5
-	title:setPosition(posX, 120)
-	self:addChild(title)
-	]]--
-	
+	self:draw_dots()	
 end
 
 -- Draw some dots
@@ -93,130 +155,96 @@ end
 function LeaderBoardScene:loginResponse()
 
 	if (social) then
-		social:getUserInfo()
+		--social:getUserInfo()
 		social:getScores()
 	end
 end
 
 function LeaderBoardScene:loginError()
-	sceneManager:changeScene(scenes[3], 1, SceneManager.moveFromLeft, easing.linear)
+	--sceneManager:changeScene(scenes[3], 1, SceneManager.fade, easing.linear)
 end
 
--- Load friends scores from facebook on background
-function LeaderBoardScene:onEnterEnd()
-		
-	if (social and not social:isConnected()) then
-		social:login()
-	else
-		self:loginResponse()
-	end
-	
-	self:draw_header()
-	
-	-- Score list for testing
-	social = {userId = 10}
-	self.score_list = {
-						{user = {id = 1, name = "Pepito"}, score = 2000 },
-						{user = {id = 2, name = "Juanito"}, score = 1500 },
-						{user = {id = 3, name = "Daniel"}, score = 1200 },
-						{user = {id = 4, name = "Jaime"}, score = 800 },
-						{user = {id = 5, name = "Perico"}, score = 650 },
-						{user = {id = 6, name = "David"}, score = 550 },
-						{user = {id = 7, name = "Federico"}, score = 400 },
-					}
-	self:draw_list()
-	
-	--[[
-	local texture_icon = TextureManager.texture_santaclaus
-	local icon = Bitmap.new(texture_icon)
-	icon:setScale(0.2)
-	icon:setPosition(22, 0)
-	self:addChild(icon)
-	]]--
-	
-	--self:drawResume()
-	--self:drawHome()
-	
-	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
-end
-
--- Draw friends scores and player score
+-- Draw player and friends scores
 function LeaderBoardScene:draw_list()
-		
-	local layer = Sprite.new()
-	layer:setY(60)
-	self:addChild(layer)
-		
-	local score_list = self.score_list
-	local num_scores = math.min(#score_list, 6)
-	local found = false
 	
-	for a = 1, num_scores do
-		local data = self.score_list[a]
-		local sprite = Sprite.new()
-		--layer.next = sprite		
+	local layer = Sprite.new()
+	layer:setPosition(5, 60)
+	self:addChild(layer)
+	
+	-- Show list if there is
+	local score_list = self.score_list
 		
-		local b = self:draw_row(sprite, a)
-					
-		-- Check if user is on top scores
-		print(social.userId, data.user.id)
-		if (not self.found and social.userId and social.userId == data.user.id) then
-			self.found = true
-			self.player_ranking = a
+	if (score_list and #score_list > 0) then
+		local num_scores = math.min(#score_list, MAX_PLAYERS)
+		self.found = false
+	
+		print("num_scores", num_scores)
+	
+		for a = 1, num_scores do
+			local sprite = Sprite.new()		
+			local b = self:draw_row(sprite, a)
+											
+			layer:addChildAt(sprite, 1)
+			sprite:setPosition(0, b:getHeight())
+			layer = sprite
 		end
-						
-		layer:addChildAt(sprite, 1)
-		sprite:setPosition(0, b:getHeight())
-		layer = sprite
+	
+		--Player score is out of top friends score
+		if (not self.found) then
+			local player_ranking = self:getPlayerRanking()
+			local sprite = Sprite.new()
+			local b = self:draw_row(sprite, player_ranking)
+			layer:addChildAt(sprite, 1)
+			sprite:setPosition(0, b:getHeight() + 6)
+			layer = sprite
+			
+			--num_scores = num_scores + 1
+		end
+				
+		--if (num_scores < 2) then
+			--self:showInvitation()
+		--end
+	else
+		print("Empty list")
 	end
-		
-	--Player score is out of top friends score
-	if (not self.found) then
-		self.player_ranking = self:getPlayerRanking()
-		local sprite = Sprite.new()
-		local b = self:draw_row(sprite, self.player_ranking)
-		layer:addChildAt(sprite, 1)
-		sprite:setPosition(0, b:getHeight() + 6)
-		layer = sprite
-	end
-
+	
 end
+
 
 -- Draw one score row
 function LeaderBoardScene:draw_row(sprite, a)
-
-	--[[
-	local b = Shape.new()
-	local width, height = application:getContentWidth() - 20, 50
-	b:setFillStyle(Shape.SOLID, 0xffffff, 0.6)
-	b:setLineStyle(1, 0x000000)
-	b:beginPath()
-	b:moveTo(15,0)
-	b:lineTo(width, 0)
-	b:lineTo(width, height)
-	b:lineTo(15, height)
-	b:lineTo(15, 0)
-	b:endPath()
-	sprite:addChild(b)
-	]]--
 	
-	local width, height = application:getContentWidth() - 10, 60
+	local width, height = application:getContentWidth() - 10, 70
+	local data = self.score_list[a]
 	
 	local b = Shape.new()
-	b:setFillStyle(Shape.SOLID, 0xB9D3EE)
+	
+	-- Check if user is on top scores
+	--print(social.userid, data.user.id)
+	if (not self.found and social.userid and social.userid == data.user.id) then
+		self.found = true
+		self.player_ranking = a
+		
+		b:setFillStyle(Shape.SOLID, 0x1E90FF)
+	elseif (a > MAX_PLAYERS) then
+		b:setFillStyle(Shape.SOLID, 0x1E90FF)
+	else
+		b:setFillStyle(Shape.SOLID, 0xB9D3EE)
+	end
+	
 	b:setLineStyle(2, 0xF0FFF0)
 	b:drawRoundRectangle(width, height , 20)
 	sprite:addChild(b)
-	
+
 	local rank = TextField.new(LeaderBoardScene.font_rank, a)
 	
-	if a == 1 then -- Medal gold
+	if (a == 1) then -- Medal gold
 		rank:setTextColor(0x0000ff)
 		local medal = Bitmap.new(LeaderBoardScene.texture_medalgold)
 		medal:setScale(0.5)
 		medal:setPosition(5, -4)
 		b:addChild(medal)
-	elseif (a == 2) then -- Medal argent
+	elseif (a == 2) then -- Medal silver
 		rank:setTextColor(0xffffff)
 	
 		local medal = Bitmap.new(LeaderBoardScene.texture_medalsilver)
@@ -241,16 +269,29 @@ function LeaderBoardScene:draw_row(sprite, a)
 	local score = data.score
 	
 	-- Username
-	local title = TextField.new(LeaderBoardScene.font_name, firstname)
-	title:setTextColor(0x00486e)
-	title:setPosition(80, 16)
-	b:addChild(title)
+	local text_name = TextField.new(LeaderBoardScene.font_name, string.sub(firstname,1, 12))
+	if (a > MAX_PLAYERS or (social.userid and social.userid == data.user.id)) then
+		text_name:setTextColor(0xffffff)
+	else
+		text_name:setTextColor(0x00486e)
+	end
+	
+	text_name:setPosition(150, 5)
+	b:addChild(text_name)
+	
+	-- User photo
+	--local photo = Bitmap.new(Texture.new("gfx/user_default.jpg"))
+	local photo = loadFBphoto(data.user.id)				
+	photo:setPosition(85, 6)
+	b:addChild(photo)
 	
 	-- Score
-	title = TextField.new(LeaderBoardScene.font_score, score)
-	title:setTextColor(0xA52A2A)
-	title:setPosition(b:getWidth()-(title:getWidth() + 15), 16)
-	b:addChild(title)
+	local text_score = TextField.new(LeaderBoardScene.font_score, score)
+	text_score:setTextColor(0xF52A2A)
+	text_score:setShadow(2,1, 0x000000)
+	--text_score:setPosition(b:getWidth()-(text_score:getWidth() + 15), 16)
+	text_score:setPosition(b:getWidth() * 0.5 -text_score:getWidth() *  0.5 + 30, 30)
+	b:addChild(text_score)
 	
 	b.scene = self
 	
@@ -280,7 +321,59 @@ function LeaderBoardScene:draw_tab(posX, label)
 	
 end
 
+-- Draw OK button
+function LeaderBoardScene:draw_ok()
+	local group = Sprite.new()
+	
+	local border = Shape.new()
+	border:setFillStyle(Shape.SOLID, 0x5F9F9F)
+	border:setLineStyle(2, 0xF0FFF0)
+	border:drawRoundRectangle(200, 80, 40)
+	group:addChild(border)
+
+	local text = TextField.new(MenuScene.font_button, "OK")
+	text:setTextColor(0xFFD700)
+	text:setShadow(3, 1, 0x000000)
+	text:setPosition((200 - text:getWidth()) * 0.5, 30)
+	group:addChild(text)
+	
+	group:setPosition(150, 620)
+	self:addChild(group)
+	
+	group:addEventListener(Event.MOUSE_UP,
+							function(event)
+								if (group:hitTestPoint(event.x, event.y)) then
+									event:stopPropagation()
+									SoundManager.play_effect(2)
+									sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
+								end
+							end)
+end
+
+-- Show Facebook invite icon
+function LeaderBoardScene:showInvitation()
+	
+	local width, height = application:getContentWidth() - 20, 200
+	
+	local sprite = Sprite.new()
+	local b = Shape.new()	
+	
+	b:setFillStyle(Shape.SOLID, 0xB9D3EE)
+	b:setLineStyle(2, 0x000000)
+	b:drawRoundRectangle(width, height , 20)
+	sprite:addChild(b)
+	
+	sprite:setPosition(10, 220)
+	self:addChild(sprite)
+	
+	local text = TextField.new(LeaderBoardScene.font_name, "Invite to friends")
+	local posX = (sprite:getWidth() - text:getWidth()) * 0.5
+	text:setPosition(posX, 20)
+	sprite:addChild(text)
+end
+
 -- Draw try again button
+--[[
 function LeaderBoardScene:drawResume()
 	
 	-- Resume button
@@ -340,6 +433,7 @@ function LeaderBoardScene:drawHome()
 	
 	self:addChild(button_home)
 end
+]]--
 
 -- When back button is pressed
 function LeaderBoardScene:onKeyDown(event)
@@ -347,7 +441,7 @@ function LeaderBoardScene:onKeyDown(event)
 	local keyCode = event.keyCode
 	if (keyCode == KeyCode.BACK) then
 		event:stopPropagation()
-		sceneManager:changeScene(scenes[1], 1, SceneManager.fade, easing.linear)
+		sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 	end
 			
 end

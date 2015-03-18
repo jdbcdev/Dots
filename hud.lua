@@ -81,7 +81,7 @@ function Hud:draw_powerups()
 	PowerupScene.draw_panel(self.scene)
 end
 
--- Increase score +1
+-- Increase score (+1 normal)
 function Hud:updateScore(list)
 	
 	local scene = self.scene
@@ -118,4 +118,10 @@ function Hud:updateMoves()
 		
 		sceneManager:changeScene(scenes[4], 1, SceneManager.fade, easing.linear, {userData = self.score})
 	end
+end
+
+-- Five movements extra
+function Hud:addMoves()	
+	self.moves = self.moves + 5
+	self.text_moves2:setText(self.moves)
 end

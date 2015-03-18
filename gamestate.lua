@@ -21,6 +21,9 @@ function GameState:load()
 		self.highscore = state.highscore
 		self.coins = state.coins
 	end
+	
+	--self.coins = 5000
+	print("coins", self.coins)
 end
 
 

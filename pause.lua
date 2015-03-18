@@ -21,7 +21,6 @@ end
 -- Show interstitial ads
 function Caption:show_ads()
 
-	Advertise.hideBanner()
 	local ad_type = math.random(1,2)
 	if (ad_type == 1) then
 		Advertise.showInterstitial()

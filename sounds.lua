@@ -12,6 +12,9 @@ function SoundManager.setup()
 							Sound.new("sounds/guitar5.mp3"),
 							Sound.new("sounds/guitar6.mp3"),
 							Sound.new("sounds/guitar7.mp3"),
+							Sound.new("sounds/piano_a.wav"), -- index == 8
+							Sound.new("sounds/piano_b.wav"),
+							Sound.new("sounds/piano_c.wav"),
 							}
 							
 	SoundManager.music_enabled = false

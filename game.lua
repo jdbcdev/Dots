@@ -31,6 +31,8 @@ end
 function GameScene:create()
 	self.first_time = true
 	
+	self.enable_remove = false -- Enabling to remove a single dot with double tap
+	
 	-- Create a dots layer
 	local layer = Sprite.new()
 	self:addChild(layer)
@@ -50,7 +52,7 @@ function GameScene:drawDots()
 	
 	local posX = 30
 	local posY = 110
-	local i,j
+
 	for i=1, num_rows do
 		board[i] = board[i] or {}
 		for j=1, num_columns do	
@@ -115,6 +117,7 @@ end
 
 -- Remove dots list from scene when matching happens
 function GameScene:deleteDots()
+	
 	local list = self.list
 	local board = self.board
 	local layer = self.layer_dots
@@ -126,7 +129,7 @@ function GameScene:deleteDots()
 				layer:removeChild(dot)
 			end
 		end
-		
+			
 		SoundManager.play_melody(#list)
 
 		-- Drop new dots from the top
@@ -223,6 +226,70 @@ end
 -- Apply powerup feature depending on given index
 function GameScene:apply_powerup(index)	
 	print("index", index)
+	
+	if (index == 1) then -- Extra movements
+		self.hud:addMoves()
+		
+		SoundManager.play_effect(8)
+		return
+	end
+	
+	if (index == 2) then -- You can remove one dot
+		SoundManager.play_effect(9)
+		
+		local board = self.board
+		for i=1,num_rows do
+			for j=1,num_columns do
+				local dot = board[i][j]
+				dot:addSquare()
+			end
+		end	
+		
+		self.enable_remove = true
+		
+		return
+	end
+	
+	if (index == 3) then -- Diagonals are allowed
+		SoundManager.play_effect(10)
+				
+		local board = self.board
+		for i=1,num_rows do
+			for j=1,num_columns do
+				local dot = board[i][j]
+				dot:addCircle()
+			end
+		end	
+	end
+	
+end
+
+-- Back to normal state
+function GameScene:removeSingleDot(dot)
+	if (dot) then
+		
+		local board = self.board
+		local layer = self.layer_dots
+				
+		-- Back to normal square
+		if (layer and board) then
+			for i=1,num_rows do
+				for j=1,num_columns do
+					local dot = board[i][j]
+					dot:removeSquare()
+				end
+			end	
+		end
+		
+		-- Remove single dot
+		board[dot.row][dot.col] = nil
+		layer:removeChild(dot)
+		
+		self.enable_remove = false
+		
+		self.gaps = 1 -- Only one dot removed
+		self:settleDots()
+	end
 end
 
 -- Show paused caption
@@ -262,7 +329,7 @@ function GameScene:hide_paused()
 		self:removeChild(caption)
 	end
 		
-	Advertise.hideBanner()
+	--Advertise.hideBanner()
 	
 	local button_pause = self.hud.pause
 	if (button_pause) then

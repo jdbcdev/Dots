@@ -131,7 +131,7 @@ function ShopScene:draw_ok()
 							function(event)
 								if (group:hitTestPoint(event.x, event.y)) then
 									event:stopPropagation()
-									--SoundManager.play_effect("jewel")
+									SoundManager.play_effect(2)
 									
 									-- Back to previous scene
 									sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)

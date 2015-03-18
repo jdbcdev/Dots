@@ -2,30 +2,30 @@
 Advertise = Core.class()
 
 local android = application:getDeviceInfo() == "Android"
-android = false
+--android = false
 local iOS = application:getDeviceInfo() == "iOS"
 
-local android_block_id = "ca-app-pub-3310916075178120/7448582299" 
-local android_block2_id = "ca-app-pub-3310916075178120/1402048691"
+local appKey = "57e61d714057aaaa842a6e4c2dace86a5133428c44e798dd"
 
-local interval = math.random(1,2)
+--local android_block_id = "ca-app-pub-3310916075178120/7448582299" 
+
+--local interval = math.random(1,2)
 
 function Advertise.setup()
 	if (android or iOS) then
 		require "ads"
 		
 		if (android) then
-		
-			--print("android")
-			admob = Ads.new("admob")
-			admob:setKey(android_block_id)
 			
-			admob:addEventListener(Event.AD_RECEIVED, function(e)
-														print("admob AD_RECEIVED")
+			appodeal = Ads.new("appodeal")
+			appodeal:setKey(appKey)
+						
+			appodeal:addEventListener(Event.AD_RECEIVED, function(e)
+														print("appodeal AD_RECEIVED")
 													end)
 			
-			admob:addEventListener(Event.AD_FAILED, function(e)
-														print("admob AD_FAILED", e.error)
+			appodeal:addEventListener(Event.AD_FAILED, function(e)
+														print("appodeal AD_FAILED", e.error)
 													end)
 		elseif (iOS) then
 			iad = Ads.new("iad")
@@ -45,8 +45,7 @@ end
 function Advertise.showBanner()
 	
 	if (android and admob) then
-		admob:setKey(android_block2_id)
-		admob:showAd("smart_banner")
+		admob:showAd("smart_banner");
 		admob:setAlignment("center", "bottom")
 	elseif (iOS and iad) then
 		iad:showAd("banner")
@@ -69,9 +68,8 @@ end
 -- Show interstitial Ad
 function Advertise.showInterstitial()
 
-	if (android and admob) then
-		admob:setKey(android_block_id)
-		admob:showAd("interstitial")
+	if (android and appodeal) then
+		appodeal:showAd("auto")
 	elseif (iOS and iad) then
 		iad:showAd("interstitial")
 	else

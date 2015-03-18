@@ -1,8 +1,11 @@
 <project>
- <properties autorotation="0" encryptAssets="0" fps="30" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="com.yourdomain.yourapp" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="0" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="0">
+ <properties autorotation="0" encryptAssets="1" fps="30" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="es.jdbc.squaredots" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="1" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="1">
   <imageScales/>
  </properties>
  <folder name="sounds">
+  <file source="sounds/piano_c.wav"/>
+  <file source="sounds/piano_b.wav"/>
+  <file source="sounds/piano_a.wav"/>
   <file source="sounds/guitar7.mp3"/>
   <file source="sounds/guitar6.mp3"/>
   <file source="sounds/guitar5.mp3"/>
@@ -38,6 +41,7 @@
   <file source="fonts/futur1.ttf"/>
  </folder>
  <folder name="gfx">
+  <file source="gfx/user_default.jpg"/>
   <file source="gfx/circle_blue.png"/>
   <file source="gfx/circle_yellow.png"/>
   <file source="gfx/circle_orange.png"/>

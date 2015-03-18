@@ -33,13 +33,16 @@ end
 
 -- When menu scene is loaded
 function MenuScene:enterEnd()
-	
+		
 	self:draw_start()
 	--self:draw_shop()
 	
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 	
-	--Advertise.showBanner()
+	local ad_type = math.random(2)
+	--if (show == 1) then
+		Advertise.showInterstitial()
+	--end
 end
 
 -- Draw menu background

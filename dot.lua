@@ -1,6 +1,9 @@
 
 Dot = Core.class(Sprite)
 
+Dot.SQUARE = 1
+Dot.CIRCLE = 2
+
 local colors = {
 				0x483D8B,
 				0xFF0000,
@@ -21,7 +24,7 @@ local textures_types = {
 ]]--
 
 -- Check if two dots given are neighbords (horizontal, vertical or diagonal)
-local function isNeighbord(dot1, dot2)
+local function isNeighbord(dot1, dot2, diagonal)
 
 	if (dot1 == dot2) then
 		return false
@@ -29,7 +32,10 @@ local function isNeighbord(dot1, dot2)
 	
 	local result = ((dot1.row == dot2.row) and (dot1.col == dot2.col + 1 or dot1.col == dot2.col -1))  -- same row
 					or ((dot1.col == dot2.col) and (dot1.row == dot2.row + 1 or dot1.row == dot2.row -1)) -- same row
-					--or (math.abs(dot1.col - dot2.col) == 1 and math.abs(dot1.row - dot2.row) == 1) -- diagonal
+					
+	if diagonal then
+		result = result or (math.abs(dot1.col - dot2.col) == 1 and math.abs(dot1.row - dot2.row) == 1) -- diagonal
+	end
 	
 	return result
 end
@@ -51,19 +57,20 @@ local function create_line(dot1, dot2)
 end
 
 -- Return a circle shape
-local function create_circle(color)
+local function create_circle(color, size)
 	local shape = Shape.new()
 	shape:setFillStyle(Shape.SOLID, color)
-	shape:drawCircle(25, 25, 25)
+	shape:drawCircle(size, size, size)
 	
 	return shape
 end
 
 -- Return a square shape
-local function create_square(color)
+local function create_square(color, size)
+	
 	local shape = Shape.new()
 	shape:setFillStyle(Shape.SOLID, color)
-	shape:drawRoundRectangle(50, 50, 0)
+	shape:drawRoundRectangle(size, size, 0)
 	
 	return shape
 end
@@ -71,27 +78,18 @@ end
 -- Constructor
 function Dot:init(row, col)
 	local color = math.random(#colors)
-	--local dot = Bitmap.new(textures_types[color])
-	--self:setScale(0.43)
 	
-	--[[
-	local i = math.random(1,2)
-	local dot 
-	if (i==1) then
-		dot = create_circle(colors[color])
-	else
-		dot = create_square(colors[color])
-	end
-	]]--
-	
-	local dot = create_square(colors[color])
+	self.type = Dot.SQUARE
+		
+	local square = create_square(colors[color], 50)
 	
 	self.enabled = true
 	self.color = color
 	self.row = row
 	self.col = col
 	
-	self:addChild(dot)
+	self.square = square
+	self:addChild(square)
 		
 	self:addEventListener(Event.MOUSE_DOWN, self.click, self)
 	self:addEventListener(Event.MOUSE_MOVE, self.move, self)
@@ -105,7 +103,16 @@ function Dot:click(event)
 		local layer = self:getParent()
 		if (layer) then
 			local scene = layer:getParent()
+			
 			if (scene) then
+			
+				if (scene.enable_remove) then 
+					-- Remove dot 
+	
+					scene:removeSingleDot(self)
+					return
+				end
+				
 				local list = {} 
 				list[1] = self -- first dot
 				scene.current_dot = self
@@ -128,18 +135,26 @@ function Dot:move(event)
 
 				-- Check if dot is already in the list
 				local current_dot = scene.current_dot
+				local diagonal_allowed = self.diagonal_allowed or current_dot.diagonal_allowed -- Circle to square or viceversa
 				if (current_dot.color == self.color and not (current_dot == self))
-						and isNeighbord(current_dot, self) then	-- Same dot type
+						and isNeighbord(current_dot, self, diagonal_allowed) then	-- Same dot color
 									
 					--New dot only if dot already exists
 					if (self == list[1]) then
 						self:draw_line()
-					elseif not (table.contains(list, self)) then
+					elseif (not table.contains(list, self)) then
+												
 						table.insert(list, self)
 						
 						-- Draw one line to connect two dots
 						self:draw_line()
 						scene.current_dot = self
+					end
+				else
+					-- Remove dot list and lines
+					if (not (current_dot == self)) and (not (current_dot.color == self.color) or (not isNeighbord(current_dot, self, diagonal_allowed))) then
+						scene.list = {}
+						scene:deleteTrack()
 					end
 				end
 			end
@@ -163,6 +178,48 @@ function Dot:draw_line()
 			end
 		end
 	end
+end
+
+-- Second square enabling to remove single dot
+function Dot:addSquare()
+	
+	local square = self.square
+	square:setAlpha(0.5)
+	
+	--local circle = create_circle(colors[self.color])
+	local square2 = create_square(colors[self.color], 35)
+	local posX = (square:getWidth() - square2:getWidth()) * 0.5
+	local posY = (square:getHeight() - square2:getHeight()) * 0.5
+	square2:setPosition(posX, posY)
+	self:addChild(square2)
+	self.square2 = square2
+end
+
+function Dot:addCircle()
+	
+	self.type = Dot.CIRCLE
+	
+	local square = self.square
+	square:setAlpha(0.5)
+	
+	local circle = create_circle(colors[self.color], 25)
+	--local circle = create_square(colors[self.color], 30)
+	local posX = (square:getWidth() - circle:getWidth()) * 0.5
+	local posY = (square:getHeight() - circle:getHeight()) * 0.5
+	circle:setPosition(posX, posY)
+	--circle:setAlpha(0.6)
+	self:addChild(circle)
+	
+	self.diagonal_allowed = true
+end
+
+-- Normal dot
+function Dot:removeSquare()
+	
+	self:removeChild(self.square2)
+	self.square2 = nil
+	
+	self.square:setAlpha(1)
 end
 
 -- Set row and column
