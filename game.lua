@@ -170,7 +170,7 @@ function GameScene:settleDots()
 			if not dot then
 				local index = self:lookForDot(i-1, j) -- Looking for a dot must be dropped
 				if (index == 0) then
-					-- No gem to drop
+					-- No dot to drop
 					break
 				else
 					drops = drops + 1
@@ -190,7 +190,6 @@ function GameScene:settleDots()
 									 onComplete = function()
 													gaps = gaps - 1
 													if (drops == 0) then
-														print("gaps es cero")
 														self:drawDots()
 													end
 												  end
@@ -286,6 +285,7 @@ function GameScene:removeSingleDot(dot)
 		layer:removeChild(dot)
 		
 		self.enable_remove = false
+		SoundManager.play_effect(1)
 		
 		self.gaps = 1 -- Only one dot removed
 		self:settleDots()
@@ -295,7 +295,7 @@ end
 -- Show paused caption
 function GameScene:show_paused()
 	
-	self:show_layers()
+	--self:show_layers()
 	
 	self.paused = true
 	
@@ -377,7 +377,13 @@ function GameScene:onKeyDown(event)
 		
 		if (self.paused) then
 			event:stopPropagation()
-			sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
+			
+			if (self.shop) then -- Powerup scene shown
+				PowerupScene.hide_powerup(self)
+				self:show_paused()		
+			else
+				sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
+			end
 		else
 			self:show_paused()
 		end

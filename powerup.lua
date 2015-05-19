@@ -8,17 +8,17 @@ function PowerupScene.setup()
 	local content = {}
 	content[1] = {title = "moves_5", 
 				icon = Hud.texture_powerup[1][1],
-				price = 500
+				price = 1000
 			}
 
 	content[2] = {title = "trash_dot",
 				icon = Hud.texture_powerup[2][1],
-				price = 1500
+				price = 500
 			}
 			
-	content[3] = {title = "one_dagger",
+	content[3] = {title = "diagonal",
 				icon = Hud.texture_powerup[3][1],
-				price = 500
+				price = 5000
 			}
 			
 	PowerupScene.content = content
@@ -43,7 +43,7 @@ function PowerupScene:enterEnd()
 	
 	self:draw_item(index)
 	self:draw_buttons(index)
-	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+	--self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 	
 	Advertise.showBanner()
 end
@@ -51,8 +51,8 @@ end
 -- Draw title of game shop
 function PowerupScene:draw_title()
 
-	local num_coins = gameState.coins
-	local text_dots = TextField.new(ScoreScene.font_points, num_coins)
+	local num_dots = gameState.dots
+	local text_dots = TextField.new(ScoreScene.font_points, num_dots)
 	text_dots:setTextColor(0xFFD700)
 	text_dots:setShadow(2, 1, 0x001100)
 		
@@ -150,17 +150,17 @@ function PowerupScene:draw_price()
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0x00B2EE)
 	border:setLineStyle(2, Colors.BLACK)
-	border:drawRoundRectangle(300, 100, 40)
+	border:drawRoundRectangle(400, 100, 40)
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, "5 X "..content[index].price.."  "..getString("dots"))
 	text:setTextColor(0xFFD700)
 	text:setShadow(3, 1, 0x000000)
-	local posX = (300 - text:getWidth()) * 0.5
+	local posX = (400 - text:getWidth()) * 0.5
 	text:setPosition(posX, 40)
 	group:addChild(text)
 	
-	group:setPosition(100, 470)
+	group:setPosition(40, 470)
 	self:addChild(group)
 	group:addEventListener(Event.MOUSE_DOWN,
 							function(event)
@@ -178,26 +178,15 @@ function PowerupScene:draw_price()
 									text:setShadow(3, 1, 0x000000)
 									
 									local price = content[index].price
-									
-									-- You get more powerups if you have enough jewels and less than 9995
-									if (gameState.coins >= price and gameState.powerups[index] < max_powerup)then
-										SoundManager.play_effect(7)
-										gameState:add_powerup(index)
-										gameState:remove_coins(content[index].price)
-										gameState:save()
+																		
+									-- You get more powerups if you have enough dots and less than 9995
+									if (gameState.dots >= price and gameState.powerups[index] < max_powerup)then
+											
+										SoundManager.play_effect(6)
 										
-										-- Add powerups to current parent scene (game or score scene)
-										--[[
-										local parent = self:getParent()
-										if (parent) then
-											local hud = parent.hud
-											if (hud) then
-												hud:add_powerup(index, 5)
-											else
-												parent:add_powerup(index, 5)
-											end
-										end
-										]]--
+										gameState:add_powerup(index)
+										gameState:remove_dots(price)
+										gameState:save()								
 										
 										-- Update dots you have
 										self:removeChild(self.text_dots)
@@ -209,21 +198,36 @@ function PowerupScene:draw_price()
 										number_items:setText(num)
 										local posX = (width - number_items:getWidth()) * 0.5
 										number_items:setX(posX)
-									elseif (gameState.coins < price) then
-										-- Not enough jewels or number of jewels is > 9995, ??
-										--print("Not enough jewels")
 										
+										local scene = self:getParent()
+										if (scene.panel) then -- Redraw the powerup panel to update number of items
+											scene:removeChild(scene.panel)
+											scene.panel = nil
+											
+											PowerupScene.draw_panel(scene)
+											scene.panel:setVisible(false)
+										end
+									elseif (gameState.dots < price) then -- Get dots in the shop scene
+										
+										SoundManager.play_effect(8)
+										
+										--[[
 										local alertDialog = AlertDialog.new(getString("not_enough_dots"), 
 																			getString("need_more"), 
 																			getString("yes"), 
 																			getString("no_thanks"))
-	
 										alertDialog:addEventListener(Event.COMPLETE, 
 											function(event)
 												if (event.buttonIndex) then
 													sceneManager:changeScene(scenes[3], 1, SceneManager.fade, easing.linear)
 												end
 											end)
+										]]--
+										
+										local alertDialog = AlertDialog.new(getString("not_enough_dots"), 
+																			"",
+																			getString("ok"))
+										
 										alertDialog:show()
 									end
 								end
@@ -240,7 +244,7 @@ function PowerupScene:draw_ok()
 	border:drawRoundRectangle(200, 80, 40)
 	group:addChild(border)
 
-	local text = TextField.new(MenuScene.font_button, "OK")
+	local text = TextField.new(MenuScene.font_button, getString("ok"))
 	text:setTextColor(0xFFD700)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((200 - text:getWidth()) * 0.5, 30)
@@ -253,7 +257,8 @@ function PowerupScene:draw_ok()
 							function(event)
 								if (group:hitTestPoint(event.x, event.y)) then
 									event:stopPropagation()
-									--SoundManager.play_effect("jewel")
+									
+									SoundManager.play_effect(1)
 									
 									local scene = self:getParent()
 									-- Check if game is paused or not
@@ -261,7 +266,6 @@ function PowerupScene:draw_ok()
 										PowerupScene.hide_powerup(scene)
 										scene:show_paused()										
 									else
-										SoundManager.play_effect(1)
 										sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 									end
 								end
@@ -292,7 +296,7 @@ function PowerupScene.draw_panel(scene, show)
 	end
 end
 
--- Draw sandclock powerup icon
+-- Draw powerup icon
 function PowerupScene.draw_powerup(scene, posX, a, show)
 
 	if (scene and scene.panel) then
@@ -323,51 +327,51 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 		button:setPosition(posX, posY)
 		panel:addChild(button)
 		
-		local number = TextField.new(ScoreScene.font_option, powerups_num[a])
+		local number = TextField.new(PowerupScene.font_desc, powerups_num[a])
 		local posX = button:getX() + (button:getWidth() - number:getWidth()) * 0.5
 		number:setPosition(posX, posY + 80)
 		number:setTextColor(0xffffff)
+		number:setShadow(2,1, 0x000000)
 		panel:addChild(number)
 		
 		button:addEventListener("click", function()
-		
-											if (scene and scene.paused) then
-												return
-											end
-											
 											if (show) then
 												SoundManager.play_effect(2)
 												sceneManager:changeScene(scenes[5], 1, SceneManager.fade, easing.linear, {userData = a})
 											else
-												local hud = scene.hud
-												if (hud and hud.powerup_enabled[a]) then
+												SoundManager.play_effect(7 + a)
 												
-													if (powerups_num[a] > 0) then
-														powerups_num[a] = powerups_num[a] - 1
-														number:setText(powerups_num[a])
-													
-														hud.powerup_enabled[a] = false
+												if (scene.paused) then
+													PowerupScene.show_powerup(scene, a)
+												else
+													local hud = scene.hud
+													if (hud and hud.powerup_enabled[a]) then
+												
+														if (powerups_num[a] > 0) then
+															powerups_num[a] = powerups_num[a] - 1
+															number:setText(powerups_num[a])
 														
-														scene:apply_powerup(a)
+															hud.powerup_enabled[a] = false
+															
+															scene:apply_powerup(a)
 														
-														local posX = button:getX() + (button:getWidth() - number:getWidth()) * 0.5
-														number:setX(posX)
+															local posX = button:getX() + (button:getWidth() - number:getWidth()) * 0.5
+															number:setX(posX)
 														
-														texture = Hud.texture_powerup[a][2]
-														icon:setTexture(texture)
-														icon2:setTexture(texture)
-													else													
-														PowerupScene.show_powerup(scene, a)
+															texture = Hud.texture_powerup[a][2]
+															icon:setTexture(texture)
+															icon2:setTexture(texture)
+														else													
+															PowerupScene.show_powerup(scene, a)
+														end
 													end
 												end
 											end
 										end)
-		
-		
 	end
 end
 
--- Show powerup scene
+-- Show powerup scene over already existing game scene
 function PowerupScene.show_powerup(scene, index)
 	
 	if (scene and scene.hide_layers) then
@@ -379,19 +383,28 @@ function PowerupScene.show_powerup(scene, index)
 		scene.shop = shop
 	
 		shop:enterEnd()
+		
+		-- Hide pause panel
+		local caption = scene.caption
+		if (caption and scene:contains(caption)) then
+			scene:removeChild(caption)
+		end
 	end
 end
 
 -- Hide powerup scene
 function PowerupScene.hide_powerup(scene)
 
-	if (scene) then
+	if (scene and scene.show_layers) then
 		scene:removeChild(scene.shop)
 		scene.shop = nil
+		
+		scene:show_layers()
 	end
 end
 
 -- Go back to menu when back key is pressed
+--[[
 function PowerupScene:onKeyDown(event)
 	local keyCode = event.keyCode
 	if (keyCode == KeyCode.BACK) then
@@ -403,12 +416,12 @@ function PowerupScene:onKeyDown(event)
 			parent:removeChild(self)
 			parent.shop = nil
 			
-			parent:show_paused()
+			--parent:show_paused()
 		else
-			-- Back to main menu
-			
-			Timer.resumeAll()
-			sceneManager:changeScene(scenes[1], 1, SceneManager.fade, easing.linear)
+			-- Back to game mode scene
+			--Timer.resumeAll()
+			sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 		end
 	end
 end
+]]--

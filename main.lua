@@ -21,12 +21,16 @@ end
 local function preloader()
 	stage:removeEventListener(Event.ENTER_FRAME, preloader)
 	
-	--[[
 	if (ios or android) then
 		social = Social.new()
-		social:login()
+		
+		--social:logout()
+		
+		-- Automatic login
+		if (social:wasConnected()) then
+			social:login()
+		end
 	end
-	]]--
 	
 	Advertise.setup()
 	MenuScene.setup()

@@ -113,7 +113,7 @@ function Hud:updateMoves()
 		self.moves = self.moves - 1
 		self.text_moves2:setText(self.moves)
 	else
-		gameState:add_coins(self.score)
+		gameState:add_dots(self.score)
 		gameState:save()
 		
 		sceneManager:changeScene(scenes[4], 1, SceneManager.fade, easing.linear, {userData = self.score})

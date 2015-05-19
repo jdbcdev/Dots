@@ -62,6 +62,7 @@ function Caption:draw_buttons()
 								function(event)
 									if (scene.paused and button_resume:hitTestPoint(event.x, event.y)) then
 										event:stopPropagation()
+										SoundManager.play_effect(5)
 										scene:hide_paused()
 									end
 								end
@@ -73,6 +74,7 @@ function Caption:draw_buttons()
 							function(event)
 								if (scene.paused and button_home:hitTestPoint(event.x, event.y)) then
 									event:stopPropagation()
+									SoundManager.play_effect(2)
 									Timer.resumeAll()
 									sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 								end

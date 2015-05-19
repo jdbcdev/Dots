@@ -13,19 +13,30 @@ end
 -- When menu scene is loaded
 function GameModeScene:enterEnd(event)
 	self:draw_play()
-	self:draw_shop()
-	self:draw_leaderboard()
+	
+	-- Facebook login button
+	if (social) then
+		if (social:wasConnected()) then
+			self:draw_leaderboard()
+		else
+			self:draw_login()
+		end
+	else	
+		self:draw_leaderboard()
+	end
 	
 	self:draw_comment()
 	self:draw_panel()
+	
+	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 end
 
 -- Show earned dots as title
 function GameModeScene:draw_title()
 	
 	--print("gameState", gameState)
-	local num_coins = gameState.coins
-	local text_dots = TextField.new(ScoreScene.font_points, num_coins)
+	local num_dots = gameState.dots
+	local text_dots = TextField.new(ScoreScene.font_points, num_dots)
 	text_dots:setTextColor(0xFFD700)
 	text_dots:setShadow(2, 1, 0x001100)
 		
@@ -72,12 +83,13 @@ function GameModeScene:draw_play()
 	group:addChild(icon)
 	
 	local text = TextField.new(MenuScene.font_button, getString("play"))
-	text:setTextColor(0xFFD700)
+	text:setTextColor(0xFFFFFF)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((280 - text:getWidth()) * 0.6, 46)
 	group:addChild(text)
 	
-	group:setPosition(100, 480)
+	--group:setPosition(100, 480)
+	group:setPosition(100, 380)
 	self:addChild(group)
 	
 	group:addEventListener(Event.MOUSE_UP,
@@ -126,25 +138,67 @@ function GameModeScene:draw_shop()
 end
 
 
--- Draw leaderboard button
-function GameModeScene:draw_leaderboard()
+-- Draw Facebook login button
+function GameModeScene:draw_login()
 	
 	local group = Sprite.new()
 	
 	local border = Shape.new()
-	border:setFillStyle(Shape.SOLID, 0xFF7F24)
+	--border:setFillStyle(Shape.SOLID, 0xFF7F24)
+	--border:setLineStyle(2, 0xF0FFF0)
+	border:setFillStyle(Shape.SOLID, 0x00B2EE)
+	border:setLineStyle(2, 0xF0FFF0)
+	border:drawRoundRectangle(280, 100, 40)
+	group:addChild(border)
+	
+	local icon = Bitmap.new(MenuScene.texture_facebook)
+	icon:setScale(0.5)
+	icon:setPosition(10, 20)
+	group:addChild(icon)
+	
+	local text = TextField.new(MenuScene.font_button, getString("login"))
+	text:setTextColor(0xFFFFFF)
+	text:setShadow(3, 1, 0x000000)
+	text:setPosition((280 - text:getWidth()) * 0.6, 46)
+	group:addChild(text)
+	
+	group:setPosition(100, 210)
+	self:addChild(group)
+	
+	group:addEventListener(Event.MOUSE_UP,
+							function(event)
+								if (group:hitTestPoint(event.x, event.y)) then
+									event:stopPropagation()
+									SoundManager.play_effect(6)
+									if (social) then
+										social:login()
+									end
+								end
+							end)
+							
+	self.button_login = group
+end
+
+-- Draw leaderboard button
+function GameModeScene:draw_leaderboard()
+		
+	local group = Sprite.new()
+	
+	local border = Shape.new()
+	--border:setFillStyle(Shape.SOLID, 0xFF7F24)
+	--border:setLineStyle(2, 0xF0FFF0)
+	border:setFillStyle(Shape.SOLID, 0x00B2EE)
 	border:setLineStyle(2, 0xF0FFF0)
 	border:drawRoundRectangle(300, 100, 40)
 	group:addChild(border)
 	
-	--[[local icon = Bitmap.new(MenuScene.texture_play)
+	local icon = Bitmap.new(MenuScene.texture_medal)
 	icon:setScale(0.5)
 	icon:setPosition(10, 20)
 	group:addChild(icon)
-	]]--
 	
 	local text = TextField.new(MenuScene.font_button, getString("score"))
-	text:setTextColor(0xFFD700)
+	text:setTextColor(0xFFFFFF)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((300 - text:getWidth()) * 0.6, 46)
 	group:addChild(text)
@@ -178,21 +232,25 @@ function GameModeScene:draw_panel()
 	PowerupScene.draw_panel(self, true)
 end
 
--- When back button is pressed
+-- Login callback
+function GameModeScene:onLoginComplete()
+	-- Replace login button with score button
+	if (self.button_login) then
+		self:removeChild(self.button_login)
+		self.button_login = nil
+	end
+	
+	self:draw_leaderboard()
+end
+
+-- Back to menu when back button is pressed
 function GameModeScene:onKeyDown(event)
 	
 	local keyCode = event.keyCode
 	if (keyCode == KeyCode.BACK) then
-		event:stopPropagation()
 		
-		local alertDialog = AlertDialog.new(getString("quit"), getString("sure"), getString("cancel"), getString("yes"))
-	
-		alertDialog:addEventListener(Event.COMPLETE, 
-										function(event)
-											if (event.buttonIndex) then
-												application:exit()
-											end
-										end)
-		alertDialog:show()
+		event:stopPropagation()
+		self:removeEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+		sceneManager:changeScene(scenes[1], 1, SceneManager.fade, easing.linear)
 	end
 end

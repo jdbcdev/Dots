@@ -11,7 +11,6 @@ function ScoreScene.setup()
 	ScoreScene.font_highscore = getTTFont("fonts/new_academy.ttf", 44, 36)
 	ScoreScene.font_points = TTFont.new("fonts/new_academy.ttf", 50)
 	ScoreScene.font_points2 = TTFont.new("fonts/new_academy.ttf", 62)
-	ScoreScene.font_option = getTTFont("fonts/new_academy.ttf", 24)
 end
 
 -- Constructor
@@ -47,8 +46,8 @@ end
 -- Show earned dots as title
 function ScoreScene:draw_title()
 	
-	local num_coins = gameState.coins
-	local text_dots = TextField.new(ScoreScene.font_points, num_coins)
+	local num_dots = gameState.dots
+	local text_dots = TextField.new(ScoreScene.font_points, num_dots)
 	text_dots:setTextColor(0xFFD700)
 	text_dots:setShadow(2, 1, 0x001100)
 		
@@ -68,7 +67,7 @@ function ScoreScene:draw_dots()
 					{140, 65, 0xFFA500},
 					{165, 65, 0x228B22}
 					}
-	local a
+
 	for a=1, #coords do
 		local coord = coords[a]
 		local posX, posY, color = coord[1], coord[2], coord[3]

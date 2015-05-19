@@ -1,5 +1,5 @@
 <project>
- <properties autorotation="0" encryptAssets="1" fps="30" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="es.jdbc.squaredots" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="1" retinaDisplay="0" touchToMouse="1" assetsOnly="0" orientation="0" architecture="1">
+ <properties autorotation="0" encryptAssets="1" fps="30" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="es.jdbc.squaredots" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="1" retinaDisplay="0" touchToMouse="1" assetsOnly="1" orientation="0" architecture="1">
   <imageScales/>
  </properties>
  <folder name="sounds">
@@ -41,6 +41,8 @@
   <file source="fonts/futur1.ttf"/>
  </folder>
  <folder name="gfx">
+  <file source="gfx/logo_fb.png"/>
+  <file source="gfx/medal.png"/>
   <file source="gfx/user_default.jpg"/>
   <file source="gfx/circle_blue.png"/>
   <file source="gfx/circle_yellow.png"/>
@@ -52,7 +54,6 @@
   <file source="gfx/hyperlink_green.png"/>
   <file source="gfx/gear_red.png"/>
   <file source="gfx/shopping_cart_green.png"/>
-  <file source="gfx/speaker_blue.png"/>
   <file source="gfx/trash_yellow.png"/>
   <file source="gfx/clock.png"/>
   <file source="gfx/clock_blue.png"/>

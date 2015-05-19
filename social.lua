@@ -9,7 +9,7 @@ require "json"
 Social = Core.class()
 
 local appName = "Square Dots"
-local appId = "621579057939107" -- Jelly Sky
+local appId = "801512953264015" -- Square Dots Facebook
 
 local fbPhotoQueue = {}
 
@@ -199,8 +199,8 @@ function Social:onLoginComplete(event)
 	--self:readScore()
 	
 	local scene = sceneManager:getCurrentScene()
-	if (scene and scene.loginComplete) then
-		scene:loginComplete()
+	if (scene and scene.onLoginComplete) then
+		scene:onLoginComplete()
 		self.scene = scene
 	end
 end
@@ -215,21 +215,6 @@ function Social:onLoginError(event)
 	if (self.scene and self.scene.loginError) then
 		self.scene:loginError()
 	end
-end
-
--- Return true if session token exists
-function Social:wasConnected()
-		
-	if (facebook) then		
-		local session_token = self.session_token or dataSaver.loadValue("sessionToken")
-		if (session_token) then
-			return true
-		else
-			return false
-		end
-	end
-	
-	return false
 end
 
 -- Facebook login
@@ -247,8 +232,14 @@ function Social:logout()
 	--end
 end
 
+-- Get access token
 function Social:getAccessToken()
 	self.accessToken = facebook:getAccessToken()
+end
+
+-- Retrieve access token expiration date
+function Social:getExpirationDate()
+	self.expirationDate = facebook:getExpirationDate()
 end
 
 -- Get user info
@@ -257,11 +248,6 @@ function Social:getUserInfo()
 	if (self.connected) then
 		facebook:getProfile()
 	end
-end
-
--- Retrieve access token expiration date
-function Social:getExpirationDate()
-	self.expirationDate = facebook:getExpirationDate()
 end
 
 -- Send score to Facebook
@@ -357,4 +343,12 @@ function Social:getRequest()
 	if (self.connected) then
 		facebook:graphRequest("me/requests")
 	end
+end
+
+-- Return true access token already exists
+function Social:wasConnected()
+
+	local access_token = facebook:getAccessToken()
+	local result = not (access_token == "")
+	return result
 end

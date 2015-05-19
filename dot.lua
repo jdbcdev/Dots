@@ -143,7 +143,7 @@ function Dot:move(event)
 					if (self == list[1]) then
 						self:draw_line()
 					elseif (not table.contains(list, self)) then
-												
+							
 						table.insert(list, self)
 						
 						-- Draw one line to connect two dots
@@ -169,12 +169,16 @@ function Dot:draw_line()
 		local scene = layer:getParent()
 		if (scene) then
 			local current_dot = scene.current_dot
+			local lines = scene.lines
+			local dots = scene.list
 			
-			local line = create_line(current_dot, self)
-			if line then
-				layer:addChild(line)
-				local lines = scene.lines
-				table.insert(lines, line)
+			-- Avoid repeated lines
+			if (#lines + 1 <= #dots) then 
+				local line = create_line(current_dot, self)
+				if line then
+					layer:addChild(line)				
+					table.insert(lines, line)
+				end
 			end
 		end
 	end

@@ -1,23 +1,24 @@
 
 ShopScene = Core.class(Sprite)
 
+local android = application:getDeviceInfo() == "Android"
+
 local width = application:getContentWidth()
-local prefix = "jewel_"
+local prefix = "dots_"
 
 function ShopScene.setup()
 
-	--ShopScene.texture_bg = Texture.new("gfx/wallpaper3.jpg")
 	ShopScene.texture_cart = Texture.new("gfx/shopping_cart_green.png", true)
-	--ShopScene.texture_coin = Texture.new("gfx/jewel_red.png", true)
 	
 	ShopScene.font_title = TTFont.new("fonts/new_academy.ttf", 40)
 	ShopScene.font_dots = TTFont.new("fonts/new_academy.ttf", 42)
-	ShopScene.font_prize = TTFont.new("fonts/DroidSansFallback.ttf", 50)
+	ShopScene.font_price = TTFont.new("fonts/DroidSansFallback.ttf", 45)
 end
 
 -- Constructor
 function ShopScene:init()
-
+	
+	self.billing = Billing.new()
 	self:draw_title()
 	
 	--Event listeners
@@ -28,27 +29,35 @@ end
 function ShopScene:enterEnd()
 
 	local posY = {106, 196, 286, 376, 486}
-	local productPrices = Billing.getProductPrices() 
+	local productPrices = self.billing:getProductPrices() 
 	if (android) then
-		if productPrices then
+		if (productPrices and #productPrices > 0) then -- There are products
 			local a = 1
 			for k,v in pairs(productPrices) do	
-				local desc = string.gsub(k, "jewel_", "")
+				local desc = string.gsub(k, "dots_", "")
 				self:createItem(desc, v, posY[a])
 				a = a + 1
 			end
+		else
+			-- Show no products available
+			self:draw_noproducts()
 		end
+			
 	else
-		self:createItem("1000", "0.70 €", 106)
-		self:createItem("3000", "1.45 €", 196)
-		self:createItem("8000", "2.99 €", 286)
-		self:createItem("20000", "3.99 €", 376)
-		self:createItem("50000", "4.99 €", 486)
+		self:createItem("5000", 106)
+		self:createItem("15000", 196)
+		self:createItem("45000", 286)
+		self:createItem("300000", 376)
 	end
 	
 	self:draw_ok()
 	
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+end
+
+-- Show product list
+function ShopScene:showProducts()
+
 end
 
 -- Draw title of game shop
@@ -62,8 +71,32 @@ function ShopScene:draw_title()
 	self:addChild(text)
 end
 
--- Create in-app purchase virtual item (coins)
-function ShopScene:createItem(label, value, posY)
+-- Show no products message
+function ShopScene:draw_noproducts()
+	
+	local rect_width = width - 10
+	local posY = 106
+	
+	local mesh = Mesh.new() 
+	mesh:setVertices(1, 10, posY - 5, 2, rect_width, posY - 5, 3, rect_width, posY + 80, 4, 10,  posY + 80) 
+	mesh:setIndexArray(1, 2, 3, 1, 3, 4) 
+	local color = 0x5F9F9F
+	mesh:setColorArray(color, 0.7, color, 0.7, color, 0.7, color, 0.7) 
+	self:addChild(mesh)
+	
+	local text = TextField.new(ShopScene.font_dots, "No products")
+	text:setTextColor(0xffff00)
+	text:setShadow(2,1, 0x000000)
+	text:setPosition(24, 24)
+	self:addChild(text)
+	
+	local posX = (width - text:getWidth()) * 0.5
+	text:setPosition(posX, posY + 24)
+	
+end
+
+-- Create in-app purchase virtual item (dots)
+function ShopScene:createItem(label, posY)
 			
 	local rect_width = width - 10
 		
@@ -86,24 +119,29 @@ function ShopScene:createItem(label, value, posY)
 	cart:setScale(0.64, 0.64)
 	cart:setPosition(360, 0)
 	sprite:addChild(cart)
-				
+		
 	sprite:addEventListener(Event.MOUSE_UP, 
 							function(event)
 								if (sprite:hitTestPoint(event.x, event.y)) then
 									print("purchase", label, value)
 									event:stopPropagation()
 									
-									Billing.purchase(prefix..label)
+									print(prefix..label)
+									self.billing:purchase(prefix..label)
 								end
 							end)
-								
-	local prize = TextField.new(ShopScene.font_prize, value)
-	--prize:setTextColor(0xff0000)
-	prize:setTextColor(Colors.WHITE)
-	prize:setShadow(2,1, 0x000000)
-	prize:setPosition(270, 20)
 	
-	sprite:addChild(prize)
+	local product_id = "dots_"..label
+	local billing = self.billing
+	local price = billing:getPrice(product_id)
+	print("price", price)
+	
+	local text_price = TextField.new(ShopScene.font_price, price)
+	text_price:setTextColor(Colors.WHITE)
+	text_price:setShadow(2,1, 0x000000)
+	text_price:setPosition(270, 20)
+	
+	sprite:addChild(text_price)
 	self:addChild(sprite)
 	sprite:setPosition(10, posY)
 end
@@ -145,6 +183,6 @@ function ShopScene:onKeyDown(event)
 	if (keyCode == KeyCode.BACK) then
 		-- Back to main menu
 		event:stopPropagation()
-		sceneManager:changeScene(scenes[1], 1, SceneManager.fade, easing.linear)
+		sceneManager:changeScene(scenes[2], 1, SceneManager.fade, easing.linear)
 	end
 end

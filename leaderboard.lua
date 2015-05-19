@@ -121,8 +121,8 @@ end
 function LeaderBoardScene:draw_header()
 	
 	--print("gameState", gameState)
-	local num_coins = gameState.coins
-	local text_dots = TextField.new(ScoreScene.font_points, num_coins)
+	local num_dots = gameState.dots
+	local text_dots = TextField.new(ScoreScene.font_points, num_dots)
 	text_dots:setTextColor(0xFFD700)
 	text_dots:setShadow(2, 1, 0x001100)
 		
@@ -197,13 +197,7 @@ function LeaderBoardScene:draw_list()
 			layer:addChildAt(sprite, 1)
 			sprite:setPosition(0, b:getHeight() + 6)
 			layer = sprite
-			
-			--num_scores = num_scores + 1
 		end
-				
-		--if (num_scores < 2) then
-			--self:showInvitation()
-		--end
 	else
 		print("Empty list")
 	end
@@ -289,7 +283,6 @@ function LeaderBoardScene:draw_row(sprite, a)
 	local text_score = TextField.new(LeaderBoardScene.font_score, score)
 	text_score:setTextColor(0xF52A2A)
 	text_score:setShadow(2,1, 0x000000)
-	--text_score:setPosition(b:getWidth()-(text_score:getWidth() + 15), 16)
 	text_score:setPosition(b:getWidth() * 0.5 -text_score:getWidth() *  0.5 + 30, 30)
 	b:addChild(text_score)
 	
@@ -371,69 +364,6 @@ function LeaderBoardScene:showInvitation()
 	text:setPosition(posX, 20)
 	sprite:addChild(text)
 end
-
--- Draw try again button
---[[
-function LeaderBoardScene:drawResume()
-	
-	-- Resume button
-	local icon_resume = Bitmap.new(TextureManager.texture_resume)
-	icon_resume:setScale(0.5)
-	
-	local text_resume = TextField.new(ScoreScene.font_option, getString("try_again"))
-	text_resume:setTextColor(0xff0000)
-	text_resume:setShadow(1, 1, 0xffffff)
-	text_resume:setPosition(-(text_resume:getWidth() - icon_resume:getWidth()) * 0.5, icon_resume:getHeight())
-		
-	local button_resume = Sprite.new()
-	button_resume:setPosition(68, 340)
-	
-	button_resume:addChild(icon_resume)
-	button_resume:addChild(text_resume)
-	
-	button_resume:addEventListener(Event.MOUSE_UP, 
-								function(event)
-									if (button_resume:hitTestPoint(event.x, event.y)) then
-										event:stopPropagation()
-										MenuScene.sound_push:play()
-										sceneManager:changeScene(scenes[2], 0.5, SceneManager.fade, easing.linear)
-									end
-								end
-							)
-	self:addChild(button_resume)
-end
-
--- Draw home button
-function LeaderBoardScene:drawHome()
-
-	-- Home button
-	local icon_menu = Bitmap.new(TextureManager.texture_home)
-	icon_menu:setScale(0.5)
-	
-	local button_home = Sprite.new()
-	button_home:setPosition(174 , 340)
-	button_home:addEventListener(Event.MOUSE_UP,
-							function(event)
-								if (button_home:hitTestPoint(event.x, event.y)) then
-									event:stopPropagation()
-									MenuScene.sound_push:play()
-									sceneManager:changeScene(scenes[1], 1, SceneManager.moveFromLeft, easing.OutBack)
-								end
-							end
-						)
-	self:addChild(button_home)
-	
-	button_home:addChild(icon_menu)
-	
-	local text_menu = TextField.new(ScoreScene.font_option, getString("main_menu"))
-	text_menu:setTextColor(0x000000)
-	text_menu:setShadow(1, 1, 0xffffff)
-	text_menu:setPosition(-(text_menu:getWidth() - icon_menu:getWidth()) * 0.5, icon_menu:getHeight())
-	button_home:addChild(text_menu)
-	
-	self:addChild(button_home)
-end
-]]--
 
 -- When back button is pressed
 function LeaderBoardScene:onKeyDown(event)

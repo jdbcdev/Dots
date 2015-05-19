@@ -17,9 +17,11 @@ function MenuScene.setup()
 	--Textures
 	MenuScene.texture_shop = Texture.new("gfx/shopping_cart_green.png", true)
 	MenuScene.texture_play = Texture.new("gfx/play.png", true)
+	MenuScene.texture_facebook = Texture.new("gfx/logo_fb.png", true)
+	MenuScene.texture_medal = Texture.new("gfx/medal.png", true)
 	
 	MenuScene.font_title = TTFont.new("fonts/new_academy.ttf", 90)
-	MenuScene.font_button = TTFont.new("fonts/new_academy.ttf", 30)
+	MenuScene.font_button = TTFont.new("fonts/new_academy.ttf", 34)
 end
 
 -- Constructor
@@ -35,14 +37,10 @@ end
 function MenuScene:enterEnd()
 		
 	self:draw_start()
-	--self:draw_shop()
+		
+	Advertise.showInterstitial()
 	
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
-	
-	local ad_type = math.random(2)
-	--if (show == 1) then
-		Advertise.showInterstitial()
-	--end
 end
 
 -- Draw menu background
@@ -131,6 +129,10 @@ function MenuScene:draw_start()
 									sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 								end
 							end)
+end
+
+function MenuScene:draw_login()
+	
 end
 
 -- When back button is pressed
