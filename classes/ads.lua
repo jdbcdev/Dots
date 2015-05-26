@@ -2,7 +2,7 @@
 Advertise = Core.class()
 
 local android = application:getDeviceInfo() == "Android"
-android = false
+--android = false
 local iOS = application:getDeviceInfo() == "iOS"
 
 local appKey = "57e61d714057aaaa842a6e4c2dace86a5133428c44e798dd"

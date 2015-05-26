@@ -5,9 +5,9 @@ GameState = Core.class()
 function GameState:init()
 
 	self.highscore = 0
-	--self.powerups = {5, 5, 5}
-	self.powerups = {0, 0, 0}
-	self.dots = 5000
+	self.powerups = {5, 5, 5}
+	--self.powerups = {0, 0, 0}
+	self.dots = 7000
 	
 	self:load()
 end

@@ -121,7 +121,10 @@ function Hud:updateMoves()
 end
 
 -- Five movements extra
-function Hud:addMoves()	
-	self.moves = self.moves + 5
+function Hud:addMoves(num_moves)
+	
+	local num_moves = num_moves or 5
+	
+	self.moves = self.moves + num_moves
 	self.text_moves2:setText(self.moves)
 end

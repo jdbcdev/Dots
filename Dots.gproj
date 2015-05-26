@@ -1,5 +1,5 @@
 <project>
- <properties autorotation="0" encryptAssets="1" fps="30" scaleMode="3" mouseToTouch="1" iosDevice="0" packageName="es.jdbc.squaredots" logicalHeight="800" logicalWidth="480" mouseTouchOrder="0" encryptCode="1" retinaDisplay="0" touchToMouse="1" assetsOnly="1" orientation="0" architecture="1">
+ <properties logicalWidth="480" autorotation="0" mouseTouchOrder="0" retinaDisplay="0" encryptCode="1" architecture="1" packageName="es.jdbc.squaredots" scaleMode="3" mouseToTouch="1" encryptAssets="1" orientation="0" fps="30" touchToMouse="1" logicalHeight="800" assetsOnly="1" iosDevice="0">
   <imageScales/>
  </properties>
  <folder name="sounds">
@@ -64,7 +64,6 @@
  <file source="pause.lua"/>
  <file source="gamestate.lua"/>
  <file source="parse.lua"/>
- <file source="submit.lua"/>
  <file source="dot.lua"/>
  <file source="social.lua"/>
  <file source="i18n.lua"/>

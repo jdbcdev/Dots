@@ -101,15 +101,31 @@ function GameScene:release(event)
 					
 		local list = self.list
 		if (list) then
+			local hud = self.hud
+			
 			if (#list >= 2) then
-				local hud = self.hud
+				
 				hud:updateScore(list)
 				self:deleteDots()
 				hud:updateMoves()
 			end	
+			
+			-- Checking for loop
+			local lines = self.lines
+			if (#list > 0 and #list == #lines) then
+				-- Loop (one extra move)
+				--print("loop")
+				hud:addMoves(1)
+				
+				self:showMessage("Extra move", 100, 70)
+			end
 		end
+		
+		--print(#list, #self.lines)
+		
 	--else
 		--print("out of scene")
+		
 	end
 
 	self:deleteTrack()
@@ -230,6 +246,8 @@ function GameScene:apply_powerup(index)
 		self.hud:addMoves()
 		
 		SoundManager.play_effect(8)
+		self:showMessage(getString("desc1"), 30, 70)
+		
 		return
 	end
 	
@@ -245,6 +263,9 @@ function GameScene:apply_powerup(index)
 		end	
 		
 		self.enable_remove = true
+		self:disablePowerups()
+		
+		self:showMessage(getString("desc2"), 30, 70)
 		
 		return
 	end
@@ -259,6 +280,8 @@ function GameScene:apply_powerup(index)
 				dot:addCircle()
 			end
 		end	
+		
+		self:showMessage(getString("desc3"), 30, 70)
 	end
 	
 end
@@ -286,6 +309,8 @@ function GameScene:removeSingleDot(dot)
 		
 		self.enable_remove = false
 		SoundManager.play_effect(1)
+		
+		self:enablePowerups()
 		
 		self.gaps = 1 -- Only one dot removed
 		self:settleDots()
@@ -367,6 +392,43 @@ function GameScene:showBonus(bonus, posX, posY)
 											self:removeChild(message)
 										end
 							})
+end
+
+-- Show simple text message
+function GameScene:showMessage(label, posX, posY)
+
+	local message = TextField.new(font, label)
+	message:setTextColor(0xff0000)
+	message:setShadow(2,1, 0x000000)
+	message:setPosition(posX, posY)
+	self:addChild(message)
+	
+	local tween = GTween.new(message, 1.2, 
+							{scaleX = 0.5, scaleY = 0.5, alpha=0.5},
+							{ease = easing.linear, 
+							onComplete = function()
+											self:removeChild(message)
+										end
+							})
+end
+
+-- Disable all powerups
+function GameScene:disablePowerups()
+
+	local hud = self.hud
+	
+	for a=1,#hud.powerup_enabled do
+		hud.powerup_enabled[a] = false
+	end
+end
+
+-- Enable all powerups
+function GameScene:enablePowerups()
+	local hud = self.hud
+	
+	for a=1,#hud.powerup_enabled do
+		hud.powerup_enabled[a] = true
+	end
 end
 
 -- Back to menu when back button is pressed
