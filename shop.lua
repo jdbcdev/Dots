@@ -1,10 +1,24 @@
 
 ShopScene = Core.class(Sprite)
 
-local android = application:getDeviceInfo() == "Android"
+--local android = application:getDeviceInfo() == "Android"
 
 local width = application:getContentWidth()
 local prefix = "dots_"
+
+local function getKeysSortedByValue(tbl, sortFunction)
+  local keys = {}
+  for key in pairs(tbl) do
+    table.insert(keys, key)
+  end
+
+  table.sort(keys, function(a, b)
+    return sortFunction(tbl[a], tbl[b])
+  end)
+
+  return keys
+end
+
 
 function ShopScene.setup()
 
@@ -18,7 +32,7 @@ end
 -- Constructor
 function ShopScene:init()
 	
-	self.billing = Billing.new()
+	--ShopScene.billing = Billing.new() -- static variable	
 	self:draw_title()
 	
 	--Event listeners
@@ -27,27 +41,28 @@ end
 
 -- When scene is loaded
 function ShopScene:enterEnd()
-
-	local posY = {106, 196, 286, 376, 486}
-	local productPrices = self.billing:getProductPrices() 
+	
+	--[[
 	if (android) then
-		if (productPrices and #productPrices > 0) then -- There are products
-			local a = 1
-			for k,v in pairs(productPrices) do	
-				local desc = string.gsub(k, "dots_", "")
-				self:createItem(desc, v, posY[a])
-				a = a + 1
-			end
+		local billing = ShopScene.billing
+		if (billing) then
+			self:show_products()
 		else
-			-- Show no products available
-			self:draw_noproducts()
+			ShopScene.billing = Billing.new() -- Created just once
 		end
-			
 	else
 		self:createItem("5000", 106)
 		self:createItem("15000", 196)
 		self:createItem("45000", 286)
 		self:createItem("300000", 376)
+	end
+	]]--
+	
+	local billing = ShopScene.billing
+	if (billing) then
+		self:show_products()
+	else
+		ShopScene.billing = Billing.new() -- Created just once
 	end
 	
 	self:draw_ok()
@@ -55,9 +70,31 @@ function ShopScene:enterEnd()
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 end
 
--- Show product list
-function ShopScene:showProducts()
-
+-- Show In-app product list
+function ShopScene:show_products()
+	
+	local billing = ShopScene.billing
+	if (billing) then
+		
+		local posY = {106, 196, 286, 376}
+		local prices = billing:getProductPrices()
+				
+		if (prices) then -- There are products
+			
+			local sortedKeys = getKeysSortedByValue(prices, function(a, b) return a < b end)
+			
+			local a = 1
+			--for k,v in pairs(prices) do	
+			for _, value in ipairs(sortedKeys) do
+				local desc = string.gsub(value, "dots_", "")
+				self:createItem(desc, posY[a], prices[value])
+				a = a + 1
+			end
+		else
+			-- Show no products available
+			self:draw_noproducts()
+		end
+	end
 end
 
 -- Draw title of game shop
@@ -96,7 +133,7 @@ function ShopScene:draw_noproducts()
 end
 
 -- Create in-app purchase virtual item (dots)
-function ShopScene:createItem(label, posY)
+function ShopScene:createItem(label, posY, price)
 			
 	local rect_width = width - 10
 		
@@ -131,9 +168,11 @@ function ShopScene:createItem(label, posY)
 								end
 							end)
 	
+	--[[
 	local product_id = "dots_"..label
 	local billing = self.billing
 	local price = billing:getPrice(product_id)
+	]]--
 	print("price", price)
 	
 	local text_price = TextField.new(ShopScene.font_price, price)

@@ -81,6 +81,12 @@ function Billing:init()
 					dots_45000 = "2 EUR",
 					dots_300000 = "3 EUR",
 					}
+					
+		-- Show products in the scene if it is necessary
+		local scene = sceneManager:getCurrentScene()
+		if (scene and scene.show_products) then
+			scene:show_products()
+		end
 	end
 end
 
@@ -108,7 +114,7 @@ end
 -- When iab is available
 function Billing:onAvailable(event)
 	
-	print("Billing:onAvailable")
+	--print("Billing:onAvailable")
 	
 	iab:requestProducts()
 	iab:addEventListener(Event.PRODUCTS_COMPLETE, self.onRequestProductsOK, self)
@@ -128,9 +134,18 @@ function Billing:onRequestProductsOK(event)
 			local price = product.price
 			prices[productId] = price
 			
-			print(product.productId)
-			print(product.title, product.price)
+			print(productId)
+			print(product.title, price)
 		end
+	end
+	
+	-- Sort prices table
+	table.sort(prices, function(a,b) return a > b end)
+	
+	-- Show products in the scene if it is necessary
+	local scene = sceneManager:getCurrentScene()
+	if (scene and scene.show_products) then
+		scene:show_products()
 	end
 end
 
@@ -171,6 +186,7 @@ function Billing:getPrice(key)
 	end
 end
 
+-- Get the list of prices
 function Billing:getProductPrices()
 	return prices
 end

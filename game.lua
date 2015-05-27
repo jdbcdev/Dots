@@ -112,7 +112,7 @@ function GameScene:release(event)
 			
 			-- Checking for loop
 			local lines = self.lines
-			if (#list > 0 and #list == #lines) then
+			if (#list > 3 and #list == #lines) then
 				-- Loop (one extra move)
 				--print("loop")
 				hud:addMoves(1)
@@ -310,7 +310,7 @@ function GameScene:removeSingleDot(dot)
 		self.enable_remove = false
 		SoundManager.play_effect(1)
 		
-		self:enablePowerups()
+		self:enablePowerups(2)
 		
 		self.gaps = 1 -- Only one dot removed
 		self:settleDots()
@@ -423,11 +423,15 @@ function GameScene:disablePowerups()
 end
 
 -- Enable all powerups
-function GameScene:enablePowerups()
+function GameScene:enablePowerups(index)
 	local hud = self.hud
 	
 	for a=1,#hud.powerup_enabled do
-		hud.powerup_enabled[a] = true
+		if (index and index == a) then
+			hud.powerup_enabled[a] = false
+		else
+			hud.powerup_enabled[a] = true
+		end
 	end
 end
 

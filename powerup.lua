@@ -338,15 +338,15 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 											if (show) then
 												SoundManager.play_effect(2)
 												sceneManager:changeScene(scenes[5], 1, SceneManager.fade, easing.linear, {userData = a})
-											else
-												SoundManager.play_effect(7 + a)
-												
+											else												
 												if (scene.paused) then
 													PowerupScene.show_powerup(scene, a)
 												else
 													local hud = scene.hud
 													if (hud and hud.powerup_enabled[a]) then
-												
+														
+														SoundManager.play_effect(7 + a)
+														
 														if (powerups_num[a] > 0) then
 															powerups_num[a] = powerups_num[a] - 1
 															number:setText(powerups_num[a])

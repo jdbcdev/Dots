@@ -2,14 +2,22 @@
 Advertise = Core.class()
 
 local android = application:getDeviceInfo() == "Android"
---android = false
+android = false
 local iOS = application:getDeviceInfo() == "iOS"
 
+-- Appodeal values
 local appKey = "57e61d714057aaaa842a6e4c2dace86a5133428c44e798dd"
 
---local android_block_id = "ca-app-pub-3310916075178120/7448582299" 
+local INTERSTITIAL = 1
+local VIDEO = 2
+local BANNER = 4
+local BANNER_BOTTOM = 8
+local BANNER_TOP = 16
+local BANNER_CENTER = 32
+local ALL = 127
+local ANY = 127
 
---local interval = math.random(1,2)
+require "bit"
 
 function Advertise.setup()
 	if (android or iOS) then
@@ -44,9 +52,8 @@ end
 -- Show banner Ad
 function Advertise.showBanner()
 	
-	if (android and admob) then
-		admob:showAd("smart_banner");
-		admob:setAlignment("center", "bottom")
+	if (android and appodeal) then
+		appodeal:showAd(BANNER_BOTTOM)
 	elseif (iOS and iad) then
 		iad:showAd("banner")
 		iad:setAlignment("center", "bottom")
@@ -55,9 +62,10 @@ function Advertise.showBanner()
 	end
 end
 
+-- Hide banner Ad
 function Advertise.hideBanner()
-	if (android and admob) then
-		admob:hideAd("smart_banner")
+	if (android and appodeal) then
+		appodeal:hideAd(BANNER_BOTTOM)
 	elseif (iOS and iad) then
 		iad:hideAd("banner")
 	else
@@ -65,11 +73,11 @@ function Advertise.hideBanner()
 	end
 end
 
--- Show interstitial Ad
+-- Show interstitial or video Ad
 function Advertise.showInterstitial()
 
 	if (android and appodeal) then
-		appodeal:showAd("auto")
+		appodeal:showAd(bit.bor(VIDEO, INTERSTITIAL))
 	elseif (iOS and iad) then
 		iad:showAd("interstitial")
 	else

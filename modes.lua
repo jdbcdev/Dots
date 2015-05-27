@@ -13,6 +13,7 @@ end
 -- When menu scene is loaded
 function GameModeScene:enterEnd(event)
 	self:draw_play()
+	--self:draw_shop()
 	
 	-- Facebook login button
 	if (social) then
@@ -108,8 +109,8 @@ function GameModeScene:draw_shop()
 	local group = Sprite.new()
 	
 	local border = Shape.new()
-	border:setFillStyle(Shape.SOLID, 0x00B2EE)
-	border:setLineStyle(2, 0xF0FFF0)
+	border:setFillStyle(Shape.SOLID, 0xFF7F24)
+	border:setLineStyle(2, 0xff0000)
 	border:drawRoundRectangle(280, 100, 40)
 	group:addChild(border)
 	
