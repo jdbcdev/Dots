@@ -89,8 +89,8 @@ function Caption:draw_option(label, posY, color)
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, color)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(300, 100, 40)
+	border:setLineStyle(2, Colors.BLACK)
+	border:drawRoundRectangle(300, 100, 0)
 	button_resume:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, getString(label))

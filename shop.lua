@@ -1,7 +1,8 @@
 
 ShopScene = Core.class(Sprite)
 
---local android = application:getDeviceInfo() == "Android"
+local android = application:getDeviceInfo() == "Android"
+local iOS = application:getDeviceInfo() == "iOS"
 
 local width = application:getContentWidth()
 local prefix = "dots_"
@@ -41,28 +42,17 @@ end
 
 -- When scene is loaded
 function ShopScene:enterEnd()
-	
-	--[[
-	if (android) then
-		local billing = ShopScene.billing
-		if (billing) then
-			self:show_products()
-		else
-			ShopScene.billing = Billing.new() -- Created just once
-		end
-	else
-		self:createItem("5000", 106)
-		self:createItem("15000", 196)
-		self:createItem("45000", 286)
-		self:createItem("300000", 376)
-	end
-	]]--
-	
+		
 	local billing = ShopScene.billing
 	if (billing) then
 		self:show_products()
 	else
 		ShopScene.billing = Billing.new() -- Created just once
+		
+		-- Show products in Gideros Player
+		if (not android) and (not iOS) then
+			self:show_products()
+		end
 	end
 	
 	self:draw_ok()
@@ -72,6 +62,8 @@ end
 
 -- Show In-app product list
 function ShopScene:show_products()
+	
+	print("show_products")
 	
 	local billing = ShopScene.billing
 	if (billing) then
@@ -148,7 +140,7 @@ function ShopScene:createItem(label, posY, price)
 	
 	local text = TextField.new(ShopScene.font_dots, label)
 	text:setTextColor(0xffff00)
-	text:setShadow(2,1, 0x000000)
+	text:setShadow(2, 2, 0x000000)
 	text:setPosition(24, 24)
 	sprite:addChild(text)
 			
@@ -160,20 +152,13 @@ function ShopScene:createItem(label, posY, price)
 	sprite:addEventListener(Event.MOUSE_UP, 
 							function(event)
 								if (sprite:hitTestPoint(event.x, event.y)) then
-									print("purchase", label, value)
+									--print("purchase", label, value)
 									event:stopPropagation()
 									
-									print(prefix..label)
-									self.billing:purchase(prefix..label)
+									--print(prefix..label)
+									ShopScene.billing:purchase(prefix..label)
 								end
 							end)
-	
-	--[[
-	local product_id = "dots_"..label
-	local billing = self.billing
-	local price = billing:getPrice(product_id)
-	]]--
-	print("price", price)
 	
 	local text_price = TextField.new(ShopScene.font_price, price)
 	text_price:setTextColor(Colors.WHITE)
@@ -191,8 +176,8 @@ function ShopScene:draw_ok()
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0xB9D3EE)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(200, 80, 40)
+	border:setLineStyle(2, Colors.BLACK)
+	border:drawRoundRectangle(200, 80, 0)
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, "OK")
@@ -222,6 +207,6 @@ function ShopScene:onKeyDown(event)
 	if (keyCode == KeyCode.BACK) then
 		-- Back to main menu
 		event:stopPropagation()
-		sceneManager:changeScene(scenes[2], 1, SceneManager.fade, easing.linear)
+		sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 	end
 end

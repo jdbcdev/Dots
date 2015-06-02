@@ -33,7 +33,7 @@ function Billing:init()
 				   dots_300000 = "dots_300000",
 				   }
 			iab:setProducts(products)
-			
+						
 		--[[elseif iaps[1] == "amazon" then
 			iab = IAB.new(iaps[1])
 			--using amazon product identifiers
@@ -76,17 +76,11 @@ function Billing:init()
 		end
 	else
 		prices = {
-					dots_5000 = "0.75 EUR",
-					dots_15000 = "1.5 EUR",
-					dots_45000 = "2 EUR",
-					dots_300000 = "3 EUR",
+					dots_5000 = "0,61 €",
+					dots_15000 = "1,21 €",
+					dots_45000 = "1,82 €",
+					dots_300000 = "2,42 €",
 					}
-					
-		-- Show products in the scene if it is necessary
-		local scene = sceneManager:getCurrentScene()
-		if (scene and scene.show_products) then
-			scene:show_products()
-		end
 	end
 end
 
@@ -114,7 +108,7 @@ end
 -- When iab is available
 function Billing:onAvailable(event)
 	
-	--print("Billing:onAvailable")
+	print("Billing:onAvailable")
 	
 	iab:requestProducts()
 	iab:addEventListener(Event.PRODUCTS_COMPLETE, self.onRequestProductsOK, self)
@@ -162,7 +156,7 @@ function Billing:onPurchaseComplete(event)
 	local productId = event.productId
 	if (productId) then
 		local num_dots = tonumber(string.sub(productId, 6)) -- Number of dots to add
-		print(num_dots)
+		--print(num_dots)
 		
 		gameState:add_dots(num_dots)
 		gameState:save()

@@ -2,7 +2,7 @@
 Advertise = Core.class()
 
 local android = application:getDeviceInfo() == "Android"
-android = false
+--android = false
 local iOS = application:getDeviceInfo() == "iOS"
 
 -- Appodeal values

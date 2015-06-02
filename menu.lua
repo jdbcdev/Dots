@@ -108,8 +108,8 @@ function MenuScene:draw_start()
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0xB9D3EE)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(280, 100, 40)
+	border:setLineStyle(2, Colors.BLACK)
+	border:drawRoundRectangle(280, 100, 0)
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, getString("start"))

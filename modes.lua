@@ -13,7 +13,7 @@ end
 -- When menu scene is loaded
 function GameModeScene:enterEnd(event)
 	self:draw_play()
-	--self:draw_shop()
+	self:draw_shop()
 	
 	-- Facebook login button
 	if (social) then
@@ -74,8 +74,9 @@ function GameModeScene:draw_play()
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0xB9D3EE)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(280, 100, 40)
+	--border:setLineStyle(2, 0xF0FFF0)
+	border:setLineStyle(2, 0x000000)
+	border:drawRoundRectangle(280, 100, 0)
 	group:addChild(border)
 	
 	local icon = Bitmap.new(MenuScene.texture_play)
@@ -90,7 +91,7 @@ function GameModeScene:draw_play()
 	group:addChild(text)
 	
 	--group:setPosition(100, 480)
-	group:setPosition(100, 380)
+	group:setPosition(100, 440)
 	self:addChild(group)
 	
 	group:addEventListener(Event.MOUSE_UP,
@@ -110,8 +111,9 @@ function GameModeScene:draw_shop()
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0xFF7F24)
-	border:setLineStyle(2, 0xff0000)
-	border:drawRoundRectangle(280, 100, 40)
+	--border:setFillStyle(Shape.SOLID, 0x009900)
+	border:setLineStyle(2, Colors.BLACK)
+	border:drawRoundRectangle(280, 100, 0)
 	group:addChild(border)
 	
 	local icon = Bitmap.new(MenuScene.texture_shop)
@@ -120,12 +122,13 @@ function GameModeScene:draw_shop()
 	group:addChild(icon)
 	
 	local text = TextField.new(MenuScene.font_button, getString("shop"))
-	text:setTextColor(0xFFD700)
+	--text:setTextColor(0xFFD700)
+	text:setTextColor(Colors.WHITE)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((280 - text:getWidth()) * 0.6, 46)
 	group:addChild(text)
 	
-	group:setPosition(100, 350)
+	group:setPosition(100, 140)
 	self:addChild(group)
 	
 	group:addEventListener(Event.MOUSE_UP,
@@ -145,11 +148,10 @@ function GameModeScene:draw_login()
 	local group = Sprite.new()
 	
 	local border = Shape.new()
-	--border:setFillStyle(Shape.SOLID, 0xFF7F24)
-	--border:setLineStyle(2, 0xF0FFF0)
 	border:setFillStyle(Shape.SOLID, 0x00B2EE)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(280, 100, 40)
+	--border:setLineStyle(2, 0xF0FFF0)
+	border:setLineStyle(2, 0x000000)
+	border:drawRoundRectangle(280, 100, 0)
 	group:addChild(border)
 	
 	local icon = Bitmap.new(MenuScene.texture_facebook)
@@ -163,7 +165,7 @@ function GameModeScene:draw_login()
 	text:setPosition((280 - text:getWidth()) * 0.6, 46)
 	group:addChild(text)
 	
-	group:setPosition(100, 210)
+	group:setPosition(100, 290)
 	self:addChild(group)
 	
 	group:addEventListener(Event.MOUSE_UP,
@@ -186,11 +188,10 @@ function GameModeScene:draw_leaderboard()
 	local group = Sprite.new()
 	
 	local border = Shape.new()
-	--border:setFillStyle(Shape.SOLID, 0xFF7F24)
-	--border:setLineStyle(2, 0xF0FFF0)
 	border:setFillStyle(Shape.SOLID, 0x00B2EE)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(300, 100, 40)
+	--border:setLineStyle(2, 0xF0FFF0)
+	border:setLineStyle(2, 0x000000)
+	border:drawRoundRectangle(300, 100, 0)
 	group:addChild(border)
 	
 	local icon = Bitmap.new(MenuScene.texture_medal)
@@ -204,7 +205,7 @@ function GameModeScene:draw_leaderboard()
 	text:setPosition((300 - text:getWidth()) * 0.6, 46)
 	group:addChild(text)
 	
-	group:setPosition(90, 210)
+	group:setPosition(90, 290)
 	self:addChild(group)
 	
 	group:addEventListener(Event.MOUSE_UP,

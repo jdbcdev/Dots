@@ -33,6 +33,7 @@ function Hud:init(scene)
 	self.score = 0
 	self.moves = 25 -- 25 + extra moves based on player progress
 	self.powerup_enabled = { true, true, true }
+	self.powerup_used = { false, false, false}
 	
 	self:draw_background()
 	

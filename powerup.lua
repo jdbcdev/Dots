@@ -90,7 +90,7 @@ function PowerupScene:draw_item(index)
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0xB9D3EE)
 	border:setLineStyle(2, Colors.BLACK)
-	border:drawRoundRectangle(width-10, 320, 20)
+	border:drawRoundRectangle(width-10, 320, 0)
 	self:addChild(border)
 	
 	border:setPosition(5, 115)
@@ -150,7 +150,7 @@ function PowerupScene:draw_price()
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0x00B2EE)
 	border:setLineStyle(2, Colors.BLACK)
-	border:drawRoundRectangle(400, 100, 40)
+	border:drawRoundRectangle(400, 100, 0)
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, "5 X "..content[index].price.."  "..getString("dots"))
@@ -164,8 +164,11 @@ function PowerupScene:draw_price()
 	self:addChild(group)
 	group:addEventListener(Event.MOUSE_DOWN,
 							function(event)
-								text:setTextColor(Colors.WHITE)
-								text:setShadow(3, 1, 0x000000)
+								if (group:hitTestPoint(event.x, event.y)) then
+									event:stopPropagation()
+									text:setTextColor(Colors.WHITE)
+									text:setShadow(3, 1, 0x000000)
+								end
 							end
 							)
 	
@@ -240,12 +243,12 @@ function PowerupScene:draw_ok()
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0x5F9F9F)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(200, 80, 40)
+	border:setLineStyle(2, Colors.BLACK)
+	border:drawRoundRectangle(200, 80, 0)
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, getString("ok"))
-	text:setTextColor(0xFFD700)
+	text:setTextColor(Colors.WHITE)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((200 - text:getWidth()) * 0.5, 30)
 	group:addChild(text)
@@ -279,9 +282,9 @@ function PowerupScene.draw_panel(scene, show)
 		local panel = Sprite.new()
 	
 		local border = Shape.new()
-		border:setFillStyle(Shape.SOLID, Colors.BLACK, 0.2)
+		border:setFillStyle(Shape.SOLID, Colors.BLACK, 0.1)
 		border:setLineStyle(2, Colors.BLACK)
-		border:drawRoundRectangle(width-10, 140, 20)
+		border:drawRoundRectangle(width-10, 140, 0)
 		panel:addChild(border)
 	
 		border:setPosition(5, 630)
@@ -350,7 +353,8 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 														if (powerups_num[a] > 0) then
 															powerups_num[a] = powerups_num[a] - 1
 															number:setText(powerups_num[a])
-														
+															
+															hud.powerup_used[a] = true -- Already used
 															hud.powerup_enabled[a] = false
 															
 															scene:apply_powerup(a)

@@ -106,7 +106,7 @@ function Dot:click(event)
 			
 			if (scene) then
 			
-				if (scene.enable_remove) then 
+				if (scene.enable_remove and self.type == Dot.SQUARE) then 
 					-- Remove dot 
 	
 					scene:removeSingleDot(self)
@@ -184,19 +184,20 @@ function Dot:draw_line()
 	end
 end
 
--- Second square enabling to remove single dot
+-- Second square enabling to remove one square dot
 function Dot:addSquare()
 	
-	local square = self.square
-	square:setAlpha(0.5)
+	if (self.type == Dot.SQUARE) then
+		local square = self.square
+		square:setAlpha(0.5)
 	
-	--local circle = create_circle(colors[self.color])
-	local square2 = create_square(colors[self.color], 35)
-	local posX = (square:getWidth() - square2:getWidth()) * 0.5
-	local posY = (square:getHeight() - square2:getHeight()) * 0.5
-	square2:setPosition(posX, posY)
-	self:addChild(square2)
-	self.square2 = square2
+		local square2 = create_square(colors[self.color], 35)
+		local posX = (square:getWidth() - square2:getWidth()) * 0.5
+		local posY = (square:getHeight() - square2:getHeight()) * 0.5
+		square2:setPosition(posX, posY)
+		self:addChild(square2)
+		self.square2 = square2
+	end
 end
 
 function Dot:addCircle()
@@ -207,23 +208,23 @@ function Dot:addCircle()
 	square:setAlpha(0.5)
 	
 	local circle = create_circle(colors[self.color], 25)
-	--local circle = create_square(colors[self.color], 30)
 	local posX = (square:getWidth() - circle:getWidth()) * 0.5
 	local posY = (square:getHeight() - circle:getHeight()) * 0.5
 	circle:setPosition(posX, posY)
-	--circle:setAlpha(0.6)
 	self:addChild(circle)
 	
 	self.diagonal_allowed = true
 end
 
--- Normal dot
+-- Square and normal dot
 function Dot:removeSquare()
 	
-	self:removeChild(self.square2)
-	self.square2 = nil
+	if (self.type == Dot.SQUARE and self.square2) then
+		self:removeChild(self.square2)
+		self.square2 = nil
 	
-	self.square:setAlpha(1)
+		self.square:setAlpha(1)
+	end
 end
 
 -- Set row and column

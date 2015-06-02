@@ -35,7 +35,7 @@ function ScoreScene:enterEnd()
 	
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 	
-	--Advertise.showInterstitial()
+	self:show_ads()
 end
 
 function ScoreScene:exitBegin()
@@ -85,7 +85,7 @@ function ScoreScene:draw_score()
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0xB9D3EE)
 	border:setLineStyle(2, Colors.BLACK)
-	border:drawRoundRectangle(width-20, 250, 20)
+	border:drawRoundRectangle(width-20, 250, 0)
 	self:addChild(border)
 	
 	border:setPosition(10, posY)
@@ -152,12 +152,12 @@ function ScoreScene:draw_play()
 	
 	local border = Shape.new()
 	border:setFillStyle(Shape.SOLID, 0x5F9F9F)
-	border:setLineStyle(2, 0xF0FFF0)
-	border:drawRoundRectangle(200, 80, 40)
+	border:setLineStyle(2, Colors.BLACK)
+	border:drawRoundRectangle(200, 80, 0)
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, "OK")
-	text:setTextColor(0xFFD700)
+	text:setTextColor(Colors.WHITE)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((200 - text:getWidth()) * 0.5, 30)
 	group:addChild(text)
@@ -188,21 +188,13 @@ end
 
 -- Draw powerups panel
 function ScoreScene:draw_panel()
-	PowerupScene.draw_panel(self)
+	PowerupScene.draw_panel(self, true)
 end
 
 -- Show powerup scene for given index
 function ScoreScene:show_powerup(index)
 	
 	sceneManager:changeScene(scenes[5], 1, SceneManager.fade, easing.linear, {userData = index} )
-	
-	--[[
-	local shop = PowerupScene.new(index)
-	self:addChild(shop)
-	self.shop = shop
-	
-	shop:enterEnd()
-	]]--
 end
 
 -- More powerups added by user
@@ -220,6 +212,15 @@ function ScoreScene:add_powerup(index, num)
 	if (num > 0) then
 		local texture = Hud.texture_powerup[index]
 		self.powerup_button[index].upState:setTexture(texture[1])
+	end
+end
+
+-- Show interstitial ads
+function ScoreScene:show_ads()
+
+	local ad_type = math.random(1,2)
+	if (ad_type == 1) then
+		Advertise.showInterstitial()
 	end
 end
 

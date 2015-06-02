@@ -241,7 +241,7 @@ end
 -- Apply powerup feature depending on given index
 function GameScene:apply_powerup(index)	
 	print("index", index)
-	
+		
 	if (index == 1) then -- Extra movements
 		self.hud:addMoves()
 		
@@ -422,7 +422,7 @@ function GameScene:disablePowerups()
 	end
 end
 
--- Enable all powerups
+-- Enable all powerups except given index
 function GameScene:enablePowerups(index)
 	local hud = self.hud
 	
@@ -430,10 +430,11 @@ function GameScene:enablePowerups(index)
 		if (index and index == a) then
 			hud.powerup_enabled[a] = false
 		else
-			hud.powerup_enabled[a] = true
+			hud.powerup_enabled[a] = not hud.powerup_used[a]
 		end
 	end
 end
+
 
 -- Back to menu when back button is pressed
 function GameScene:onKeyDown(event)
