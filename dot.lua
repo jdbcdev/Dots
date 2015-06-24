@@ -12,17 +12,6 @@ local colors = {
 				0x007FFF
 				}
 
---[[
-local textures_types = {
-						Texture.new("gfx/circle_yellow.png", true),
-						Texture.new("gfx/circle_red.png", true),
-						Texture.new("gfx/circle_orange.png", true),
-						Texture.new("gfx/circle_green.png", true),
-						Texture.new("gfx/circle_blue.png", true),
-						-- Texture.new("gfx/circle_grey.png", true)
-						}
-]]--
-
 -- Check if two dots given are neighbords (horizontal, vertical or diagonal)
 local function isNeighbord(dot1, dot2, diagonal)
 
@@ -47,8 +36,8 @@ local function create_line(dot1, dot2)
 		local line = Shape.new()
 		line:setLineStyle(8, color, 1)
 		line:beginPath()
-		line:moveTo(dot1:getX() + dot1:getWidth() * 0.5, dot1:getY() + dot1:getHeight() * 0.5)
-		line:lineTo(dot2:getX() + dot2:getWidth() * 0.5, dot2:getY() + dot2:getHeight() * 0.5)
+		line:moveTo(dot1:getX(), dot1:getY())
+		line:lineTo(dot2:getX(), dot2:getY())
 		line:endPath()
 		line:closePath()
 		
@@ -72,6 +61,8 @@ local function create_square(color, size)
 	shape:setFillStyle(Shape.SOLID, color)
 	shape:drawRoundRectangle(size, size, 0)
 	
+	shape:setAnchorPoint(0.5, 0.5)
+	
 	return shape
 end
 
@@ -81,7 +72,7 @@ function Dot:init(row, col)
 	
 	self.type = Dot.SQUARE
 		
-	local square = create_square(colors[color], 50)
+	local square = create_square(colors[color], 46)
 	
 	self.enabled = true
 	self.color = color
@@ -113,6 +104,8 @@ function Dot:click(event)
 					return
 				end
 				
+				self:setSelected()
+				
 				local list = {} 
 				list[1] = self -- first dot
 				scene.current_dot = self
@@ -132,7 +125,8 @@ function Dot:move(event)
 			
 			if (scene and scene.list) then	
 				local list = scene.list
-
+				local lines = scene.lines
+				
 				-- Check if dot is already in the list
 				local current_dot = scene.current_dot
 				local diagonal_allowed = self.diagonal_allowed or current_dot.diagonal_allowed -- Circle to square or viceversa
@@ -140,21 +134,33 @@ function Dot:move(event)
 						and isNeighbord(current_dot, self, diagonal_allowed) then	-- Same dot color
 									
 					--New dot only if dot already exists
-					if (self == list[1]) then
+					if (self == list[1] and #lines > 2) then
 						self:draw_line()
 					elseif (not table.contains(list, self)) then
 							
 						table.insert(list, self)
+						self:setSelected()
 						
 						-- Draw one line to connect two dots
 						self:draw_line()
 						scene.current_dot = self
-					end
-				else
-					-- Remove dot list and lines
-					if (not (current_dot == self)) and (not (current_dot.color == self.color) or (not isNeighbord(current_dot, self, diagonal_allowed))) then
-						scene.list = {}
-						scene:deleteTrack()
+					elseif (#list > 1 and list[#list-1] == self) then 
+					
+						-- Back drawing line
+						current_dot:setNormal()
+						table.remove(list)
+					
+						-- Remove line from list line and scene
+						
+						line = lines[#lines]
+						table.remove(lines)
+						
+						local layer = self:getParent()
+						if (line and layer:contains(line)) then
+							layer:removeChild(line)
+						end
+					
+						scene.current_dot = self
 					end
 				end
 			end
@@ -192,26 +198,25 @@ function Dot:addSquare()
 		square:setAlpha(0.5)
 	
 		local square2 = create_square(colors[self.color], 35)
-		local posX = (square:getWidth() - square2:getWidth()) * 0.5
-		local posY = (square:getHeight() - square2:getHeight()) * 0.5
-		square2:setPosition(posX, posY)
+		square2:setAnchorPoint(0.5, 0.5)
+		square2:setPosition(square:getX(), square:getY())
 		self:addChild(square2)
 		self.square2 = square2
 	end
 end
 
-function Dot:addCircle()
+function Dot:addCircle(size)
 	
 	self.type = Dot.CIRCLE
 	
 	local square = self.square
 	square:setAlpha(0.5)
 	
-	local circle = create_circle(colors[self.color], 25)
-	local posX = (square:getWidth() - circle:getWidth()) * 0.5
-	local posY = (square:getHeight() - circle:getHeight()) * 0.5
-	circle:setPosition(posX, posY)
+	local circle = create_circle(colors[self.color], size)
+	circle:setAnchorPoint(0.5, 0.5)
+	circle:setPosition(square:getX(), square:getY())
 	self:addChild(circle)
+	self.circle = circle
 	
 	self.diagonal_allowed = true
 end
@@ -224,6 +229,37 @@ function Dot:removeSquare()
 		self.square2 = nil
 	
 		self.square:setAlpha(1)
+	end
+end
+
+-- Dot (square or circle) is selected
+function Dot:setSelected()
+	if (self.type == Dot.SQUARE) then
+		self:addSquare()
+	elseif (self.type == Dot.CIRCLE) then
+	
+		-- Add new circle with lesser radius
+		local circle = self.circle
+		if (circle) then
+			self:removeChild(circle)
+			self:addCircle(20)
+		end
+	end
+end
+
+-- Square becomes normal again
+function Dot:setNormal()
+
+	if (self.type == Dot.SQUARE) then
+		self:removeSquare()
+	elseif (self.type == Dot.CIRCLE) then
+		
+		-- Add new circle with more radius
+		local circle = self.circle
+		if (circle) then
+			self:removeChild(circle)
+			self:addCircle(23)
+		end
 	end
 end
 

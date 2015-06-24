@@ -28,6 +28,8 @@ function ShopScene.setup()
 	ShopScene.font_title = TTFont.new("fonts/new_academy.ttf", 40)
 	ShopScene.font_dots = TTFont.new("fonts/new_academy.ttf", 42)
 	ShopScene.font_price = TTFont.new("fonts/DroidSansFallback.ttf", 45)
+	
+	ShopScene.billing = Billing.new()
 end
 
 -- Constructor
@@ -162,7 +164,7 @@ function ShopScene:createItem(label, posY, price)
 	
 	local text_price = TextField.new(ShopScene.font_price, price)
 	text_price:setTextColor(Colors.WHITE)
-	text_price:setShadow(2,1, 0x000000)
+	text_price:setShadow(2,3, 0x110000)
 	text_price:setPosition(270, 20)
 	
 	sprite:addChild(text_price)
@@ -181,7 +183,7 @@ function ShopScene:draw_ok()
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, "OK")
-	text:setTextColor(0xFFD700)
+	text:setTextColor(Colors.WHITE)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((200 - text:getWidth()) * 0.5, 30)
 	group:addChild(text)

@@ -32,7 +32,9 @@ local en = {
 				need_more = "You need more Dots for this. Would you like to buy some now?",
 				no_thanks = "No Thanks",
 				dots_added = " Dots added",
-				ok = "OK"
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local es = {
@@ -62,7 +64,10 @@ local es = {
 				not_enough_dots = "No tienes Puntos!",
 				need_more = "Necesitas más Puntos. ¿Quieres conseguir algunos ahora?",
 				no_thanks = "No gracias",
-				dots_added = " Puntos añadidos"
+				dots_added = " Puntos añadidos",
+				ok = "Volver",
+				purchase_completed = "Compra realizada",
+				purchase_canceled = "Compra cancelada"
 				}
 
 local de = {
@@ -86,7 +91,14 @@ local de = {
 				yes = "Ja",
 				desc1 = "Stoppt die uhr für 5 sekunden",
 				desc2 = "Entfernt zwei arten von edelsteinen",
-				desc3 = "Beseitigt eine art von juwel"
+				desc3 = "Beseitigt eine art von juwel",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local fr = {
@@ -110,7 +122,14 @@ local fr = {
 				yes = "OUI",
 				desc1 = "Arrête le temps pendant 5 secondes",
 				desc2 = "Supprime deux types de bijoux",
-				desc3 = "Élimine un type de bijou"
+				desc3 = "Élimine un type de bijou",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local it = {
@@ -134,7 +153,14 @@ local it = {
 				yes = "SI",
 				desc1 = "Fermare il tempo per 5 secondi",
 				desc2 = "Rimuove due tipi di gioielli",
-				desc3 = "Elimina un tipo di gioiello"
+				desc3 = "Elimina un tipo di gioiello",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 				
 local pt = {	
@@ -158,7 +184,14 @@ local pt = {
 				yes = "SIM",
 				desc1 = "Pára o tempo por 5 segundos",
 				desc2 = "Retira dois tipos de jóias",
-				desc3 = "Elimina um tipo de jóia"
+				desc3 = "Elimina um tipo de jóia",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 				
 local ko = {
@@ -182,7 +215,14 @@ local ko = {
 				yes = "예",
 				desc1 = "5 초 클록을 정지",
 				desc2 = "보석의 두 종류를 삭제",
-				desc3 = "보석의 1 가지의 유형을 삭제한다"
+				desc3 = "보석의 1 가지의 유형을 삭제한다",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local ru = {
@@ -207,11 +247,17 @@ local ru = {
 				yes = "да",
 				desc1 = "Остановите часы в течение 5 секунд",
 				desc2 = "Удаляет два типа драгоценных камней",
-				desc3 = "Устраняет один тип драгоценного камня"
+				desc3 = "Устраняет один тип драгоценного камня",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local ja = {
-
 				login = "ログイン",
 				loading = "荷重",
 				play = "遊ぶ",
@@ -233,7 +279,14 @@ local ja = {
 				yes = "はい",
 				desc1 = "5秒間のクロックを停止します",
 				desc2 = "宝石の二種類を削除します",
-				desc3 = "宝石の1つのタイプを排除"
+				desc3 = "宝石の1つのタイプを排除",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local zh = {
@@ -258,7 +311,14 @@ local zh = {
 				yes = "是的",
 				desc1 = "停止时钟5秒",
 				desc2 = "删除两种类型的宝石",
-				desc3 = "消除一种类型的宝石"
+				desc3 = "消除一种类型的宝石",
+				not_enough_dots = "Not Enough Dots!",
+				need_more = "You need more Dots for this. Would you like to buy some now?",
+				no_thanks = "No Thanks",
+				dots_added = " Dots added",
+				ok = "OK",
+				purchase_completed = "Purchase Completed",
+				purchase_canceled = "Purchase Canceled"
 				}
 
 local strings = {

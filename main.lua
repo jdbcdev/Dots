@@ -43,8 +43,8 @@ local function preloader()
 	--Billing.setup()
 	LeaderBoardScene.setup()
 	
-	stage:removeChild(loading)
-	loading = nil
+	--stage:removeChild(loading)
+	--loading = nil
 	
 	gameState = GameState.new()
 	
@@ -59,7 +59,16 @@ local function preloader()
 		["leaderboard"] = LeaderBoardScene
 		})
 	stage:addChild(sceneManager)
-	sceneManager:changeScene(scenes[1])
+	
+	local timer = Timer.new(1000, 1)
+	timer:addEventListener(Event.TIMER, 
+				function()
+					-- Remove loading scene
+					stage:removeChild(loading)
+					loading = nil
+					sceneManager:changeScene(scenes[1])
+				end)
+	timer:start()
 end
 
 draw_loading()

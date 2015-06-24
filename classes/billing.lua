@@ -1,11 +1,23 @@
 
 Billing = Core.class()
 
+local NAME_GOOGLE = "com.google.play"
+local NAME_SLIDEME = "SlideME"
+local NAME_APPLAND = "Appland"
+local NAME_YANDEX = "com.yandex.store"
+
 local android = application:getDeviceInfo() == "Android"
 local iOS = application:getDeviceInfo() == "iOS"
 
 local google_key = 
 		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv8vvZyadoLLd58pE00M4s8Kdp024xCP2u7Z1kebawLGABU8voo0j7hAqeMc314V/LnYaRAqa/vT54K/18Mrsb8h4VraNSoXhZxM46t6jqdlcsz4zxGr+5XGpO15XMRuTwE2EKu0w06hR4XjTgX46Nx0NKkvhBCvvuB6vO89XpJLVQroiFwABbfc4X/eigwf3lPGtR78xTFuo7jHroUcqqaPzEVxZSQNp/4s9WUcn0XSLzqWxQSycPU+Cn6Ct9Jew4Eb8ew9n2m5stjTW55gf4wPHUuKHZrl4biGp2rCNG2gpiWvnUO+QE8QlEy0XsLo7cWIpULD2twlmyzLQjwmYVwIDAQAB"
+		
+local slideme_key = 
+		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2OAnOCFWwp+EhOj+ELnjY+7jpnsQPKu51HrFWRVJ/JJXm2UBOoWgH0788QBQpg13lxpR0yZxqtjSLER8anTc7eGDr5R8EgODGsnUYb2Hxy+DpUsjaFkuZFkIX91cOxuLvfRsyc7nL0JR5FqZ4s4wZzIJmlQmSJX6R4UJbzyV7jyvhErR749wM+4vgE1OrGqx2bXXhgJoVpbJs+1BuMAhH5SLyq8jUBxj+Npiv8rQOuPnmo+IXn3K21rTX78D+Ubz/Dr9iKI9U5hs8DSve0RZgECTdMPAZY6VBTJLGedIYG/iHa/qL+KLLBnqkvUAQVMY+6wBI8V3Hmx7eAgOH9edQQIDAQAB"
+		
+local appland_key = 
+		"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDb+n05b/PshtsgjTKtWSXV4nC6zXV3DXhnBbncf6PszzIEyYxaXNzYyGHIokeH2CRNdDrRguAibQtSBNCAct3txJ3Kh2DPuzFZRlxW60eSdc+T3hldqAZld+3aTkZgLY5wzWr0vW2CGQVdOfhHuVjx5NsznedkeNUqfXTRQQE6iwIDAQAB"
+		
 local iab
 
 local products
@@ -14,6 +26,19 @@ local products
 --products["test.canceled"] = "android.test.canceled"
 
 local prices = {}
+
+-- Return true if the store is in the list
+local function lookup(list, store)
+	if (list and store) then
+		for i=1, #list do
+			if (store == list[i]) then
+				return true
+			end
+		end
+	end
+	
+	return false
+end
 
 -- Constructor
 function Billing:init()
@@ -33,12 +58,35 @@ function Billing:init()
 				   dots_300000 = "dots_300000",
 				   }
 			iab:setProducts(products)
-						
-		--[[elseif iaps[1] == "amazon" then
+		
+		--[[
+		if (lookup(iaps, "open")) then
+			print("setup open stores")
+			iab = IAB.new("open")
+			
+			iab:setUp(NAME_GOOGLE, google_key)
+			iab:setUp(NAME_SLIDEME, slideme_key)
+			--iab:setUp(NAME_APPLAND, appland_key)
+			
+			products = { 
+				   dots_5000 = "dots_5000",
+				   dots_15000 = "dots_15000", 
+				   dots_45000 = "dots_45000",
+				   dots_300000 = "dots_300000",
+				   }
+			iab:setProducts(products)
+		elseif iaps[1] == "amazon" then
 			iab = IAB.new(iaps[1])
 			--using amazon product identifiers
-			iab:setProducts({p1 = "amazonprod1", p2 = "amazonprod2", p3 = "amazonprod3"})
-			]]--
+			--iab:setProducts({p1 = "amazonprod1", p2 = "amazonprod2", p3 = "amazonprod3"})
+			
+			products = { 
+				   dots_15000 = "dots_15000", 
+				   dots_45000 = "dots_45000",
+				   dots_300000 = "dots_300000",
+				   }
+			iab:setProducts(products)
+		]]--
 		elseif iaps[1] == "ios" then
 			iab = IAB.new(iaps[1])
 			--using ios product identifiers
@@ -126,6 +174,11 @@ function Billing:onRequestProductsOK(event)
 			local product = products[a]
 			local productId = product.productId
 			local price = product.price
+						
+			if (tonumber(price) ~= nil) then
+				price = price.." USD"
+			end
+			
 			prices[productId] = price
 			
 			print(productId)

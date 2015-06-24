@@ -50,8 +50,8 @@ function GameScene:drawDots()
 	local layer = self.layer_dots
 	local board = self.board or {}
 	
-	local posX = 30
-	local posY = 110
+	local posX = 65
+	local posY = 130
 
 	for i=1, num_rows do
 		board[i] = board[i] or {}
@@ -62,13 +62,12 @@ function GameScene:drawDots()
 				-- print("new dot", i, j)
 				dot = Dot.new(i, j)
 				board[i][j] = dot
-				--dot:setPosition(posX, posY)
 				
 				if (not self.first_time) then
 					dot:setPosition(posX, posY - 70)
 					
 					-- Gtween animation here to posY
-					local tween = GTween.new(dot, 0.3, 
+					local tween = GTween.new(dot, 0.5, 
 									{y = posY}, 
 									{ease = easing.outBack})
 				else
@@ -80,7 +79,7 @@ function GameScene:drawDots()
 			posX = posX + dot:getWidth() + 24
 		end
 		
-		posX = 30
+		posX = 65
 		posY = posY + 70
 	end
 	
@@ -102,13 +101,18 @@ function GameScene:release(event)
 		local list = self.list
 		if (list) then
 			local hud = self.hud
-			
+						
 			if (#list >= 2) then
 				
 				hud:updateScore(list)
 				self:deleteDots()
 				hud:updateMoves()
 			end	
+			
+			-- Previous state of current_dot
+			if (#list == 1) then
+				self.current_dot:setNormal()
+			end
 			
 			-- Checking for loop
 			local lines = self.lines
@@ -277,7 +281,7 @@ function GameScene:apply_powerup(index)
 		for i=1,num_rows do
 			for j=1,num_columns do
 				local dot = board[i][j]
-				dot:addCircle()
+				dot:addCircle(23)
 			end
 		end	
 		
