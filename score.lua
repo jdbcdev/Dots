@@ -114,7 +114,7 @@ function ScoreScene:draw_score()
 	else
 		-- Current score
 		local text_title = TextField.new(ScoreScene.font_title, getString("your_score"))
-		text_title:setTextColor(Colors.PALEGREEN)
+		text_title:setTextColor(Colors.YELLOW)
 		text_title:setShadow(2, 1, Colors.BLACK)
 		local posX = (width - text_title:getWidth()) * 0.5
 		text_title:setPosition(posX, posY + 25)
@@ -122,7 +122,7 @@ function ScoreScene:draw_score()
 	
 		local text_score = TextField.new(ScoreScene.font_points, points)
 		text_score:setTextColor(Colors.WHITE)
-		text_score:setShadow(2,1, Colors.RED)
+		text_score:setShadow(2,1, Colors.BLACK)
 		posX = (width - text_score:getWidth()) * 0.5
 		text_score:setPosition(posX, posY + 85)
 		self:addChild(text_score)
@@ -137,7 +137,7 @@ function ScoreScene:draw_score()
 	
 		local text_highscore = TextField.new(ScoreScene.font_points, highscore)
 		text_highscore:setTextColor(Colors.WHITE)
-		text_highscore:setShadow(2,1, Colors.RED)
+		text_highscore:setShadow(2,1, Colors.BLACK)
 		posX = (width - text_highscore:getWidth()) * 0.5
 		text_highscore:setPosition(posX, posY + 200)
 		self:addChild(text_highscore)

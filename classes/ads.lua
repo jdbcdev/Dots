@@ -19,6 +19,11 @@ local ANY = 127
 
 require "bit"
 
+local admob_ios_blockid = { 
+							interstitial = "ca-app-pub-6632080215577631/7765248305", 
+							banner = "ca-app-pub-6632080215577631/9241981500"
+							}
+
 function Advertise.setup()
 	if (android or iOS) then
 		require "ads"
@@ -44,7 +49,17 @@ function Advertise.setup()
 			
 			iad:addEventListener(Event.AD_FAILED, function(e)
 														print("iad AD_FAILED", e.error)
+														if (e and e.type == "interstitial") then -- Interstitial
+															admob:setKey(admob_ios_blockid["interstitial"])
+															admob:showAd("interstitial")
+														elseif (e and e.type == "banner") then
+															admob:setKey(admob_ios_blockid["banner"])
+															admob:showAd("smart_banner")
+															admob:setAlignment("center", "bottom")
+														end
 													end)
+													
+			admob = Ads.new("admob")
 		end
 	end
 end
@@ -68,6 +83,7 @@ function Advertise.hideBanner()
 		appodeal:hideAd(BANNER_BOTTOM)
 	elseif (iOS and iad) then
 		iad:hideAd("banner")
+		admob:hideAd("smart_banner")
 	else
 		print("Hide banner")
 	end
@@ -80,6 +96,8 @@ function Advertise.showInterstitial()
 		appodeal:showAd(bit.bor(VIDEO, INTERSTITIAL))
 	elseif (iOS and iad) then
 		iad:showAd("interstitial")
+		--admob:setKey(admob_ios_blockid["interstitial"])
+		--admob:showAd("interstitial")
 	else
 		print("Show interstitial")
 	end

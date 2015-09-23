@@ -348,7 +348,10 @@ end
 -- Return true access token already exists
 function Social:wasConnected()
 
-	local access_token = facebook:getAccessToken()
+	local access_token = facebook:getAccessToken() or ""
 	local result = not (access_token == "")
+	
 	return result
+	
+	--return false
 end

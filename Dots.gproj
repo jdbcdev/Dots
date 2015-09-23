@@ -1,5 +1,5 @@
 <project>
- <properties logicalWidth="480" autorotation="0" mouseTouchOrder="0" retinaDisplay="0" encryptCode="1" architecture="1" packageName="es.jdbc.squaredots" scaleMode="3" mouseToTouch="1" encryptAssets="1" orientation="0" fps="30" touchToMouse="1" logicalHeight="800" assetsOnly="1" iosDevice="0">
+ <properties android_template="0" encryptCode="1" fps="30" mouseToTouch="1" osx_domain="giderosmobile.com" retinaDisplay="0" mouseTouchOrder="0" scaleMode="3" iosDevice="0" assetsOnly="1" logicalWidth="480" windowHeight="0" architecture="0" packageName="es.jdbc.squaredots" orientation="0" win_domain="giderosmobile.com" win_org="GiderosMobile" logicalHeight="800" osx_org="GiderosMobile" touchToMouse="1" windowWidth="0" autorotation="0" encryptAssets="1">
   <imageScales/>
  </properties>
  <folder name="sounds">
@@ -41,6 +41,7 @@
   <file source="fonts/futur1.ttf"/>
  </folder>
  <folder name="gfx">
+  <file source="gfx/pause-red.png"/>
   <file source="gfx/logo_fb.png"/>
   <file source="gfx/medal.png"/>
   <file source="gfx/user_default.jpg"/>

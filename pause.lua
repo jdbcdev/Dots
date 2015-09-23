@@ -94,7 +94,7 @@ function Caption:draw_option(label, posY, color)
 	button_resume:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, getString(label))
-	text:setTextColor(0xFFD700)
+	text:setTextColor(0xffffff)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((300 - text:getWidth()) * 0.5, 40)
 	button_resume:addChild(text)

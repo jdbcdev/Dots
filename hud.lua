@@ -1,6 +1,7 @@
 
 Hud = Core.class(Sprite)
 
+local iOS = application:getDeviceInfo() == "iOS"
 local width = application:getContentWidth()
 
 local font_title = TTFont.new("fonts/new_academy.ttf", 28)
@@ -22,6 +23,8 @@ function Hud.setup()
 							Texture.new("gfx/hyperlink_grey.png", true)
 							}
 	Hud.texture_powerup = texture_powerup
+	
+	Hud.texture_pause = Texture.new("gfx/pause-red.png", true)
 end
 
 -- Constructor
@@ -38,27 +41,40 @@ function Hud:init(scene)
 	self:draw_background()
 	
 	local posY = 26
-	local text_score = TextField.new(font_title, "Score:")
-	text_score:setPosition(30, posY)
-	self.text_score = text_score
-	self:addChild(text_score)
 	
-	local text_score2 = TextField.new(font_data, self.score)
-	text_score2:setTextColor(Colors.WHITE)
-	text_score2:setShadow(2, 1, Colors.BLACK)
-	text_score2:setPosition(text_score:getWidth() + 38, posY - 4)
-	self.text_score2 = text_score2
-	self:addChild(text_score2)
+	if (iOS) then
+		self:draw_pause()
+		
+		local text_score2 = TextField.new(font_data, self.score)
+		text_score2:setTextColor(Colors.WHITE)
+		text_score2:setShadow(2, 1, Colors.BLACK)
+		text_score2:setPosition(80, posY - 4)
+		self.text_score2 = text_score2
+		self:addChild(text_score2)
+		
+	else
+		local text_score = TextField.new(font_title, "Score:")
+		text_score:setPosition(30, posY)
+		self.text_score = text_score
+		self:addChild(text_score)
+	
+		local text_score2 = TextField.new(font_data, self.score)
+		text_score2:setTextColor(Colors.WHITE)
+		text_score2:setShadow(2, 1, Colors.BLACK)
+		text_score2:setPosition(text_score:getWidth() + 40, posY - 4)
+		self.text_score2 = text_score2
+		self:addChild(text_score2)
+	end
 	
 	local text_moves = TextField.new(font_title, "Moves:")
-	text_moves:setPosition(width * 0.5 + 40, posY)
+	text_moves:setPosition(width * 0.5 + 50, posY)
 	self.text_moves = text_moves
 	self:addChild(text_moves)
 	
 	local text_moves2 = TextField.new(font_data, self.moves)
 	text_moves2:setTextColor(Colors.WHITE)
 	text_moves2:setShadow(2, 1, Colors.BLACK)
-	text_moves2:setPosition(width * 0.5 + text_moves:getWidth() + 50, posY -4)
+	text_moves2:setPosition(width * 0.5 + text_moves:getWidth() + 60, posY -4)
 	self.text_moves2 = text_moves2
 	self:addChild(text_moves2)
 	
@@ -74,6 +90,23 @@ function Hud:draw_background()
 	mesh:setIndexArray(1, 2, 3, 1, 3, 4)
 	mesh:setColorArray(0xB9D3EE, 0.92, 0xB9D3EE, 0.92, 0xB9D3CC, 0.92, 0xB9D3CC, 0.9)
 	self:addChild(mesh)
+end
+
+-- Draw pause button		
+function Hud:draw_pause()
+	local button = Bitmap.new(Hud.texture_pause)
+	button:addEventListener(Event.MOUSE_DOWN, 
+							function(event)
+								if (button:hitTestPoint(event.x, event.y) and button:isVisible()) then
+									self.scene:show_paused()
+									button:setVisible(false)
+								end
+							end)
+	button:setScale(0.7)
+	button:setPosition(10, 10)
+	self:addChild(button)
+	
+	self.pause = button
 end
 
 -- Draw powerups panel

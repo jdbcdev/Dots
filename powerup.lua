@@ -267,7 +267,9 @@ function PowerupScene:draw_ok()
 									-- Check if game is paused or not
 									if (scene and scene.show_paused) then
 										PowerupScene.hide_powerup(scene)
-										scene:show_paused()										
+										scene:show_paused()		
+		
+										Advertise.hideBanner()
 									else
 										sceneManager:changeScene(scenes[6], 1, SceneManager.fade, easing.linear)
 									end
@@ -338,6 +340,10 @@ function PowerupScene.draw_powerup(scene, posX, a, show)
 		panel:addChild(number)
 		
 		button:addEventListener("click", function()
+											if (scene.shop) then
+												return
+											end
+		
 											if (show) then
 												SoundManager.play_effect(2)
 												sceneManager:changeScene(scenes[5], 1, SceneManager.fade, easing.linear, {userData = a})

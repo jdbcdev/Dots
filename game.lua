@@ -25,6 +25,8 @@ function GameScene:init()
 	--Event listeners
 	self:addEventListener(Event.MOUSE_UP, self.release, self)
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+	
+	Advertise.hideBanner()
 end
 
 -- Create dots on screen for the first time
@@ -358,7 +360,7 @@ function GameScene:hide_paused()
 		self:removeChild(caption)
 	end
 		
-	--Advertise.hideBanner()
+	Advertise.hideBanner()
 	
 	local button_pause = self.hud.pause
 	if (button_pause) then

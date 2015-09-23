@@ -2,7 +2,7 @@
 application:setKeepAwake(true)
 application:setOrientation(Application.PORTRAIT)
 
-local ios= application:getDeviceInfo() == "iOS"
+local iOS = application:getDeviceInfo() == "iOS"
 local android = application:getDeviceInfo() == "Android"
 
 local width = application:getContentWidth()
@@ -21,7 +21,7 @@ end
 local function preloader()
 	stage:removeEventListener(Event.ENTER_FRAME, preloader)
 	
-	if (ios or android) then
+	if (iOS or android) then
 		social = Social.new()
 		
 		--social:logout()

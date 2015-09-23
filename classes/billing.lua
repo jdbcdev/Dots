@@ -25,7 +25,8 @@ local products
 --products["test.purchased"] = "android.test.purchased"
 --products["test.canceled"] = "android.test.canceled"
 
-local prices = {}
+local prices = nil
+
 
 -- Return true if the store is in the list
 local function lookup(list, store)
@@ -170,6 +171,8 @@ function Billing:onRequestProductsOK(event)
 	print("#products", #products)
 	
 	if (products) then
+		prices = {}
+		
 		for a = 1, #products do
 			local product = products[a]
 			local productId = product.productId

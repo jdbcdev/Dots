@@ -43,28 +43,6 @@ function MenuScene:enterEnd()
 	self:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
 end
 
--- Draw menu background
-function MenuScene:draw_bg()
-	local bg = Bitmap.new(MenuScene.texture_bg)
-	self:addChild(bg)
-	
-	local witch = Bitmap.new(MenuScene.texture_witch)
-	witch:setScale(0.8)
-	witch:setPosition(220, 190)
-	self:addChild(witch)
-	
-	local tween1 = GTween.new(witch, 6, {x = 10},{ease = easing.linear})
-	local tween2 = GTween.new(witch, 6, {x = 180},{ease = easing.linear, autoPlay = false})
-	tween1.nextTween = tween2
-	tween2.nextTween = tween1
-		
-	local cat = Bitmap.new(GameScene.texture_cat)
-	cat:setScale(0.6)
-	cat:setPosition(130, 94)
-	self:addChild(cat)
-	
-end
-
 -- Draw title
 function MenuScene:draw_title()
 	
@@ -113,7 +91,7 @@ function MenuScene:draw_start()
 	group:addChild(border)
 
 	local text = TextField.new(MenuScene.font_button, getString("start"))
-	text:setTextColor(0xFFD700)
+	text:setTextColor(0xffffff)
 	text:setShadow(3, 1, 0x000000)
 	text:setPosition((280 - text:getWidth()) * 0.5, 46)
 	group:addChild(text)

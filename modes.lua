@@ -12,6 +12,9 @@ end
 
 -- When menu scene is loaded
 function GameModeScene:enterEnd(event)
+
+	Advertise.hideBanner()
+	
 	self:draw_play()
 	self:draw_shop()
 	
