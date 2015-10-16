@@ -63,23 +63,3 @@ function SoundManager.play_melody(num_dots)
 							end)
 	end
 end
-
---[[
-function SoundManager.play_pickup()
-	if not SoundManager.effects then
-		SoundManager.setup()
-	end
-	
-	local sound = SoundManager.effects["pickup"]
-	sound:play()
-end
-
-function SoundManager.play_hohoho()
-	if not SoundManager.effects then
-		SoundManager.setup()
-	end
-	
-	local sound = SoundManager.effects["hohoho"]
-	sound:play()
-end
-]]--

@@ -91,12 +91,12 @@ function Billing:init()
 		elseif iaps[1] == "ios" then
 			iab = IAB.new(iaps[1])
 			--using ios product identifiers
-			local prefix = "es.jdbc.squaredots."
+			--local prefix = "es.jdbc.squaredots."
 			products = { 
-				   dots_5000 = prefix.."dots_5000",
-				   dots_15000 = prefix.."dots_15000", 
-				   dots_45000 = prefix.."dots_45000",
-				   dots_300000 = prefix.."dots_300000",
+				   dots_5000 = "dots_5000",
+				   dots_15000 = "dots_15000", 
+				   dots_45000 = "dots_45000",
+				   dots_300000 = "dots_300000",
 				   }
 			iab:setProducts(products)
 		end
